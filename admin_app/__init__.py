@@ -1,1 +1,1 @@
-# Placeholder for admin_app package initialization
+# Admin App Initialization
