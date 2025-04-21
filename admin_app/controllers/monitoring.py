@@ -1,1 +1,5 @@
-# Placeholder for monitoring-related functionalities
+# Monitoring Controller
+def monitor_system():
+    print("Monitoring system...")
+    # Add monitoring logic here
+
