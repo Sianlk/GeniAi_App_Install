@@ -1,3 +1,3 @@
 #!/bin/bash
-echo "Deploying application..."
-# Add deployment steps here
+echo "Deploying GenesisOS to production..."
+# Deployment logic goes here
