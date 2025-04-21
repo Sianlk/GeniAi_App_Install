@@ -1,4 +1,4 @@
-GenesisOS/
+GenesisOS_App_Install/
 ├── admin_app/
 │   ├── __init__.py
 │   ├── controllers/
