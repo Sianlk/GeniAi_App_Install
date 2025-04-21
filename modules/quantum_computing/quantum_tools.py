@@ -1,8 +1,9 @@
-# Quantum Computing Module
+# Quantum Computing Tools
 from quantum_library import QuantumOptimizer
 
-def enhance_source_code(codebase):
-    print("Enhancing source code using quantum algorithms...")
+def optimize_system_performance(system_config):
+    print("[INFO] Optimizing system performance using quantum computing...")
     optimizer = QuantumOptimizer()
-    enhanced_code = optimizer.optimize(codebase)
-    return enhanced_code
+    optimized_config = optimizer.optimize(system_config)
+    print("[DEBUG] Optimization complete.")
+    return optimized_config
