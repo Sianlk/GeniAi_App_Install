@@ -1,5 +1,4 @@
 name: Advanced CI/CD Pipeline for GenesisOS
-
 on:
   push:
     branches:
