@@ -1,5 +1,5 @@
 # Monitoring
 def monitor_system():
-    print("Monitoring system for issues...")
+    print("Monitoring system vulnerabilities...")
     # Add monitoring logic here
 

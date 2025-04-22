@@ -1,1 +1,1 @@
-# Admin App Initialization
+# Admin Application Initialization
