@@ -1,1 +1,1 @@
-# GenesisOS_App_Install
+# GenesisOS Enterprise AI
