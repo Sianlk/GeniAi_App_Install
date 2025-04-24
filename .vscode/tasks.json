@@ -4,6 +4,7 @@
     "version": "2.0.0",
     "tasks": [
         {
+codespace-ominous-space-adventure-xg5rrpg6rx42pqpr
             "label": "build",
             "type": "shell",
             "command": "msbuild",
@@ -21,6 +22,11 @@
             },
             // Use the standard MS compiler pattern to detect errors, warnings and infos
             "problemMatcher": "$msCompile"
+=======
+            "label": "echo",
+            "type": "shell",
+            "command": "echo Hello"
+main
         }
     ]
 }
