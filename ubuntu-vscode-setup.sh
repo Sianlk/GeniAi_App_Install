@@ -1,1 +1,0 @@
-ubuntu-vscode-setup.sh
