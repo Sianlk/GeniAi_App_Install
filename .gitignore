@@ -54,4 +54,10 @@ def validate_python(code):
                     return True
                         except SyntaxError:
                                 return False
-                                
+   graph TD
+       A[AI Code Generation] --> B[GitHub Commit]
+           B --> C[Automated Testing]
+               C --> D{Passed?}
+                   D -->|Yes| E[Production Deployment]
+                       D -->|No| F[Slack Alert]
+                                                    
