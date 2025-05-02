@@ -1,19 +1,15 @@
 import requests
 import json
-
 def fetch_land_data(postcode):
     response = requests.get(f"https://api.ordnancesurvey.co.uk/land/v1/{postcode}")
     if response.ok:
         return response.json()
     else:
         return None
-
 def apply_building_rules(land_data):
-    # Example: apply height + setback rules
-    allowed_height = 10  # meters (adjust by zone)
-    setback = 2  # meters
+    allowed_height = 10
+    setback = 2
     return {"height": allowed_height, "setback": setback}
-
 def generate_design_plan(land_data, rules):
     plan = {
         "plot_size": land_data.get("plot_size"),
@@ -22,7 +18,6 @@ def generate_design_plan(land_data, rules):
         "design_type": "luxury"
     }
     return plan
-
 if __name__ == "__main__":
     postcode = "SW1A1AA"
     land_data = fetch_land_data(postcode)
