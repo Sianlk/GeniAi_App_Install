@@ -1,1 +1,1 @@
-# GenesisOS_App_Install
+# GeniAi_App_Install
