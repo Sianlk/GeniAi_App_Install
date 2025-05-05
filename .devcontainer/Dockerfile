@@ -1,7 +1,25 @@
-FROM yourregistry.azurecr.io/quantum-dev:11.5.0
+FROM node:20-bullseye AS builder
+WORKDIR /app
+COPY package.json package-lock.json* yarn.lock* ./
+RUN if [ -f yarn.lock ]; then yarn install --frozen-lockfile; else npm ci; fi
+COPY requirements.txt ./
+RUN pip install --upgrade pip && pip install --user --no-cache-dir -r requirements.txt
+COPY . .
+RUN if [ -f "webpack.config.js" ]; then npm run build; fi
 
-ARG QUANTUM_SDK
-ARG AI_CORE
-ARG OMNI_LICENSE
-
-RUN quantum-install omniprofit-engine==6.9.0 tax-nexus==4.2.1q photonic-real-estate-sdk==0.9.9r
+FROM python:3.10-slim
+ENV PYTHONUNBUFFERED=1
+WORKDIR /app
+COPY --from=builder /app/node_modules ./node_modules
+ENV PATH=/root/.local/bin:$PATH
+COPY --from=builder /app .
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+RUN useradd -m appuser
+USER appuser
+LABEL maintainer="inhouse-dev-team"
+LABEL app.version="1.0"
+LABEL app.description="Custom In-House Node + Python Hybrid"
+LABEL app.source="https://github.com/YourOrg/YourRepo"
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s CMD curl -f http://localhost:8000/health || exit 1
+EXPOSE 8000
+CMD ["python", "app.py"]
