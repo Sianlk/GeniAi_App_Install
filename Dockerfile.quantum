@@ -1,0 +1,20 @@
+FROM yourregistry.azurecr.io/quantum-dev:11.5.0 AS builder
+ARG QUANTUM_SDK
+ARG AI_CORE
+ARG OMNI_LICENSE
+WORKDIR /quantum
+COPY . .
+RUN quantum-install omniprofit-engine==6.9.0 tax-nexus==4.2.1q photonic-real-estate-sdk==0.9.9r
+
+FROM yourregistry.azurecr.io/quantum-dev:11.5.0
+WORKDIR /quantum
+COPY --from=builder /quantum /quantum
+RUN useradd -m quantumuser
+USER quantumuser
+LABEL maintainer="inhouse-dev-team"
+LABEL app.version="1.0"
+LABEL app.description="Quantum Core In-House Build"
+LABEL app.source="https://github.com/YourOrg/YourRepo"
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s CMD curl -f http://localhost:9000/health || exit 1
+EXPOSE 9000
+CMD ["quantum-run", "--core", "${AI_CORE}", "--license", "${OMNI_LICENSE}"]
