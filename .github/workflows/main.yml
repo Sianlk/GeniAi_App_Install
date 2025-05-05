@@ -1,6 +1,5 @@
-- name: Advanced CI/CD Pipeline for GenesisOS 
-on:
-  push:
+name:Advanced CI/CD Pipeline for GenesisOS_App_Install
+  on-push:
     branches:
       - main
   pull_request:

@@ -45,3 +45,19 @@ backup/
 *.zip
 *.log
 __pycache__/
+# File: validate_code.py
+import ast
+
+def validate_python(code):
+    try:
+            ast.parse(code)
+                    return True
+                        except SyntaxError:
+                                return False
+   graph TD
+       A[AI Code Generation] --> B[GitHub Commit]
+           B --> C[Automated Testing]
+               C --> D{Passed?}
+                   D -->|Yes| E[Production Deployment]
+                       D -->|No| F[Slack Alert]
+                                                    

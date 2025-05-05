@@ -1,0 +1,10 @@
+.git
+__pycache__
+node_modules
+*.pyc
+*.pyo
+.env
+*.log
+dist
+build
+coverage

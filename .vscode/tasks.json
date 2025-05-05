@@ -1,6 +1,5 @@
+    
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [import os
     from mega import Mega
@@ -23,9 +22,10 @@
                                     print("✅ Downloaded to UK-based VPS.")
                                     
         {
-            "label": "echo",
+            "label": "build",
             "type": "shell",
-            "command": "echo Hello"
+            "command": "echo Hello",
+            "problemMatcher": "$msCompile"
         }
     ]
 }
