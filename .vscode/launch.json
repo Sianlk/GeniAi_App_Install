@@ -29,4 +29,11 @@
             },
             "api": {
                 "path": "Path",
-                "httpMethod
+                "httpMethod": "Method",
+                "payload": {
+                    "json": {}
+                }
+            }
+        }
+    ]
+}
