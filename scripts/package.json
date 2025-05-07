@@ -1,0 +1,8 @@
+{
+  "name": "geniai-app-install",
+  "version": "1.0.0",
+  "scripts": {
+    "fix": "node scripts/auto_fix.js",
+    "conflict": "bash scripts/resolve_conflicts.sh"
+  }
+}
