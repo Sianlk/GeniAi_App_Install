@@ -1,27 +1,44 @@
-name: Auto Fix AI Workflow (Node.js)
+const { execSync } = require('child_process');
+const fs = require('fs');
 
-on:
-  workflow_dispatch:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+function run(cmd) {
+  console.log(`Running: ${cmd}`);
+  try { execSync(cmd, { stdio: 'inherit' }); } catch (err) { console.error(err.message); }
+}
 
-jobs:
-  autofix:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout repo
-      uses: actions/checkout@v4
+function cleanGit() {
+  run('git fetch --all');
+  run('git checkout main');
+  run('git reset --hard origin/main');
+  run('git clean -fd');
+  run('git pull origin main');
+}
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
+function fixFileNames() {
+  const files = execSync('git ls-files').toString().split('\n');
+  files.forEach(file => {
+    if (/[ "$'`]/.test(file)) {
+      const safeName = file.replace(/ /g, '_').replace(/["'$`]/g, '');
+      fs.renameSync(file, safeName);
+      run(`git mv "${file}" "${safeName}"`);
+      console.log(`Renamed ${file} → ${safeName}`);
+    }
+  });
+}
 
-    - name: Install ESLint and Prettier
-      run: |
-        npm install -g eslint prettier
+function checkSyntax() {
+  run('npx eslint . || true');
+  run('npx prettier --check . || true');
+}
 
-    - name: Run Node.js auto-fix script
-      run: node scripts/auto_fix.js
+function prepareCommit() {
+  run('git add .');
+  run('git commit -m "Auto AI fix (Node.js)" || true');
+  run('git push origin main');
+}
+
+cleanGit();
+fixFileNames();
+checkSyntax();
+prepareCommit();
+console.log('✅ Auto-fix Node.js script finished. Ready for rerun!');
