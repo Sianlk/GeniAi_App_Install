@@ -1,12 +1,10 @@
 name: Auto Fix AI Workflow (Node.js)
-
 on:
   workflow_dispatch:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
 jobs:
   autofix:
     runs-on: ubuntu-latest
