@@ -73,4 +73,3 @@ on-push:
       - name: Deploy application
         run: |
           ./deploy.sh
-          
