@@ -10,8 +10,7 @@
                 "/t:build",
                 "/consoleloggerparameters:NoSummary"
             ],
-            "group": "build",
-            "presentation": {
+            "group": "build",      "presentation": {
                 "reveal": "silent"
             },
             "problemMatcher": "$msCompile"
@@ -21,5 +20,3 @@
             "type": "shell",
             "command": "echo Hello"
         }
-    ]
-}
