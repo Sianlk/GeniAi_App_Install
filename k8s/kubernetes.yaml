@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-empire
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ai-empire
+  template:
+    metadata:
+      labels:
+        app: ai-empire
+    spec:
+      containers:
+      - name: ai-container
+        image: yourdockerhub/ai-empire:latest
+        ports:
+        - containerPort: 8000

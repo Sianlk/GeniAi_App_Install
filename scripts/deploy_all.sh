@@ -1,6 +1,4 @@
 #!/bin/bash
-echo "Deploying application..."
-#!/bin/bash
 echo "Building Docker images..."
 docker-compose build
 
