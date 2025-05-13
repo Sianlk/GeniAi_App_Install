@@ -1,4 +1,7 @@
 {
     "editor.wordWrap": "on",
-    "aws.telemetry": false
+    "aws.telemetry": false,
+    "githubPullRequests.ignoredPullRequestBranches": [
+        "main"
+    ]
 }
