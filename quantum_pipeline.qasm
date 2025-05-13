@@ -19,4 +19,3 @@ operation autonomous_innovation {
         shor_optimize code_qubits;
         deploy_to_marketplace;
     }
-}
