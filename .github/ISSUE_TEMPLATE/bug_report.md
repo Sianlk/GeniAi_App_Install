@@ -1,38 +1,37 @@
 ---
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
+name: Bug Report
+about: AI-triaged bug report — auto-assigned to AI Workforce Engine
+labels: ["bug", "ai-triage"]
+assignees: []
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+## Describe the Bug
+<!-- A clear and concise description -->
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+## Steps to Reproduce
+1.
+2.
+3.
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+## Expected Behavior
+<!-- What should happen -->
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+## Actual Behavior
+<!-- What actually happens -->
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+## Environment
+- OS:
+- Browser/App version:
+- Platform version:
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+## Logs / Screenshots
+<!-- Attach relevant logs -->
 
-**Additional context**
-Add any other context about the problem here.
+## Severity
+- [ ] P0-CRITICAL (system down)
+- [ ] P1-HIGH (major feature broken)
+- [ ] P2-MEDIUM (minor issue)
+- [ ] P3-LOW (cosmetic)
+
+---
+*This ticket will be automatically triaged by the AI Workforce Engine within 5 minutes.*
