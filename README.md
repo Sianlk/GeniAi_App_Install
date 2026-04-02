@@ -87,8 +87,11 @@ Apply the strongest baseline enhancement pack across all repositories and open P
 	- python scripts/apply_max_enhancements.py --owner YOUR_GITHUB_OWNER --owner-type user --apply
 3. Include private repositories:
 	- python scripts/apply_max_enhancements.py --owner YOUR_GITHUB_OWNER --owner-type user --include-private --apply
+4. Also bootstrap starter mobile app scaffold for repos with no mobile code:
+	- python scripts/apply_max_enhancements.py --owner YOUR_GITHUB_OWNER --owner-type user --include-private --bootstrap-mobile-app --apply
 
 Generated report:
 - max_enhancement_report.json
 
 Enhancement pack includes quality CI, security scanning, release governance, code ownership, contribution standards, observability baseline, go-to-market playbook, mobile store checklist, and license baseline.
+Enhancements are stack-aware: Node and Python repositories receive additional release workflows, and mobile repositories receive app/play store release workflows and submission checklists.

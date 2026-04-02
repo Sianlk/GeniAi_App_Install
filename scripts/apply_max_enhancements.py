@@ -16,7 +16,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Set
 
 API_BASE = "https://api.github.com"
 
@@ -85,7 +85,7 @@ def content_exists(owner: str, repo: str, path: str, branch: str, token: Optiona
         return False
 
 
-def build_templates() -> Dict[str, str]:
+def build_core_templates() -> Dict[str, str]:
     return {
         ".github/workflows/release-quality.yml": """name: Release Quality Gate
 on:
@@ -202,6 +202,20 @@ Report security issues privately through repository security advisories or conta
 - [ ] Crash reporting and analytics validated
 - [ ] Staged rollout and rollback criteria defined
 """,
+    "mobile/STORE_METADATA_TEMPLATE.md": """# Store Metadata Template
+
+## App Name
+
+## Short Description
+
+## Full Description
+
+## Keywords
+
+## Privacy URL
+
+## Support URL
+""",
         "LICENSE": """MIT License
 
 Copyright (c) 2026 OWNER
@@ -225,6 +239,179 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """,
     }
+
+
+def build_node_templates() -> Dict[str, str]:
+        return {
+                ".github/workflows/node-release.yml": """name: Node Release Readiness
+on:
+    pull_request:
+    push:
+        branches: [ main, master ]
+
+jobs:
+    node:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+                with:
+                    node-version: '20'
+            - name: Install and verify
+                run: |
+                    if [ -f package.json ]; then npm ci || npm install; npm run lint --if-present; npm test --if-present; npm run build --if-present; fi
+""",
+                ".nvmrc": "20\n",
+        }
+
+
+def build_python_templates() -> Dict[str, str]:
+        return {
+                ".github/workflows/python-release.yml": """name: Python Release Readiness
+on:
+    pull_request:
+    push:
+        branches: [ main, master ]
+
+jobs:
+    python:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+                with:
+                    python-version: '3.12'
+            - name: Install and test
+                run: |
+                    python -m pip install --upgrade pip
+                    if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
+                    if [ -d tests ]; then python -m pip install pytest; python -m pytest -q; fi
+""",
+                ".python-version": "3.12\n",
+        }
+
+
+def build_mobile_templates() -> Dict[str, str]:
+        return {
+                ".github/workflows/mobile-release.yml": """name: Mobile Release Readiness
+on:
+    pull_request:
+    push:
+        branches: [ main, master ]
+
+jobs:
+    mobile:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+                with:
+                    node-version: '20'
+            - uses: actions/setup-java@v4
+                with:
+                    distribution: temurin
+                    java-version: '17'
+            - name: Validate mobile release assets
+                run: |
+                    test -f mobile/STORE_RELEASE_CHECKLIST.md
+                    test -f mobile/STORE_METADATA_TEMPLATE.md
+""",
+                "mobile/APP_STORE_SUBMISSION_CHECKLIST.md": """# App Store Submission Checklist
+
+- [ ] App Privacy form completed
+- [ ] App review notes prepared
+- [ ] TestFlight validation complete
+- [ ] Crash-free sessions threshold met
+""",
+                "mobile/PLAY_STORE_SUBMISSION_CHECKLIST.md": """# Play Store Submission Checklist
+
+- [ ] Data safety form completed
+- [ ] Internal testing validated
+- [ ] ANR and crash thresholds acceptable
+- [ ] Staged rollout configured
+""",
+        }
+
+
+def build_mobile_bootstrap_templates() -> Dict[str, str]:
+        return {
+                "mobile/starter_expo/package.json": """{
+    \"name\": \"starter-expo-app\",
+    \"private\": true,
+    \"version\": \"1.0.0\",
+    \"scripts\": {
+        \"start\": \"expo start\",
+        \"android\": \"expo run:android\",
+        \"ios\": \"expo run:ios\"
+    },
+    \"dependencies\": {
+        \"expo\": \"^51.0.0\",
+        \"react\": \"^18.2.0\",
+        \"react-native\": \"^0.74.0\"
+    }
+}
+""",
+                "mobile/starter_expo/App.js": """import { Text, View } from 'react-native';
+
+export default function App() {
+    return (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <Text>Starter mobile app scaffold ready.</Text>
+        </View>
+    );
+}
+""",
+                "mobile/starter_expo/README.md": """# Starter Expo App
+
+This scaffold is an optional bootstrap to accelerate mobile delivery.
+
+## Run
+- npm install
+- npm run start
+""",
+        }
+
+
+def get_repo_paths(owner: str, repo: str, branch: str, token: Optional[str]) -> Set[str]:
+        branch_data = api_request(
+                "GET",
+                f"{API_BASE}/repos/{owner}/{repo}/branches/{urllib.parse.quote(branch)}",
+                token,
+        )
+        sha = str(branch_data["commit"]["sha"])
+        tree = api_request(
+                "GET",
+                f"{API_BASE}/repos/{owner}/{repo}/git/trees/{urllib.parse.quote(sha)}?recursive=1",
+                token,
+        )
+        return {str(item.get("path", "")) for item in tree.get("tree", []) if item.get("type") == "blob"}
+
+
+def detect_repo_signals(paths: Set[str]) -> Dict[str, bool]:
+        return {
+                "has_python": "requirements.txt" in paths or "pyproject.toml" in paths,
+                "has_node": "package.json" in paths,
+                "has_mobile": any(p.startswith("android/") for p in paths)
+                or any(p.startswith("ios/") for p in paths)
+                or "pubspec.yaml" in paths
+                or "capacitor.config.ts" in paths
+                or "capacitor.config.json" in paths
+                or "react-native.config.js" in paths,
+        }
+
+
+def build_templates_for_repo(signals: Dict[str, bool], bootstrap_mobile_app: bool) -> Dict[str, str]:
+        templates: Dict[str, str] = {}
+        templates.update(build_core_templates())
+        if signals.get("has_node"):
+                templates.update(build_node_templates())
+        if signals.get("has_python"):
+                templates.update(build_python_templates())
+        if signals.get("has_mobile"):
+                templates.update(build_mobile_templates())
+        if bootstrap_mobile_app and not signals.get("has_mobile"):
+                templates.update(build_mobile_bootstrap_templates())
+        return templates
 
 
 def create_branch(owner: str, repo: str, base_branch: str, branch: str, token: str) -> None:
@@ -287,6 +474,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--token-env", default="GITHUB_TOKEN")
     parser.add_argument("--include-private", action="store_true")
     parser.add_argument("--apply", action="store_true", help="Apply changes and open PRs")
+    parser.add_argument(
+        "--bootstrap-mobile-app",
+        action="store_true",
+        help="Add a starter mobile app scaffold in repos without mobile code",
+    )
     parser.add_argument("--branch", default="chore/max-enhancement-baseline")
     parser.add_argument("--report", default="max_enhancement_report.json")
     return parser.parse_args()
@@ -303,7 +495,6 @@ def main() -> int:
         print(f"Error: include-private requires token in {args.token_env}")
         return 2
 
-    templates = build_templates()
     repos = list_repos(args.owner, args.owner_type, token, include_private=args.include_private)
 
     report: Dict[str, object] = {
@@ -319,10 +510,19 @@ def main() -> int:
     for repo_data in repos:
         repo = str(repo_data["name"])
         default_branch = str(repo_data.get("default_branch", "main"))
+        try:
+            repo_paths = get_repo_paths(args.owner, repo, default_branch, token)
+            signals = detect_repo_signals(repo_paths)
+        except Exception:
+            repo_paths = set()
+            signals = {"has_python": False, "has_node": False, "has_mobile": False}
+
+        templates = build_templates_for_repo(signals, bootstrap_mobile_app=args.bootstrap_mobile_app)
         missing = plan_repo(args.owner, repo, default_branch, token, templates)
         item = {
             "repo": repo,
             "default_branch": default_branch,
+            "signals": signals,
             "missing_enhancements": missing,
             "applied": False,
             "pr_url": "",
