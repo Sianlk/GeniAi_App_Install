@@ -1,0 +1,18 @@
+{
+  "required_checks": [
+    "ci_workflow"
+  ],
+  "security_checks": [
+    "python_deps",
+    "node_deps"
+  ],
+  "pr": {
+    "create": false,
+    "base": "main",
+    "title_prefix": "chore: production hardening for"
+  },
+  "market_leadership": {
+    "minimum_score": 70,
+    "require_mobile_release_readiness": true
+  }
+}
