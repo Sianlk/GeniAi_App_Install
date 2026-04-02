@@ -1,31 +1,31 @@
-  "name": "OmniProfit Quantum Core",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "args": {
-      "QUANTUM_SDK": "11.5.0-entangled",
-      "AI_CORE": "phi-3-quantum-4k",
-      "OMNI_LICENSE": "${localEnv:OMNI_LICENSE_KEY}"
-    }
-  },
+{
+  "name": "GeniAI Dev",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "api",
+  "workspaceFolder": "/app",
   "features": {
-    "ghcr.io/devcontainers/features/quantum-toolchain": {
-      "version": "6.9",
-      "entanglementPairs": 2048
-    },
-    "ghcr.io/devcontainers-contrib/features/photonic-gpu": {
-      "driverVersion": "550.54.14"
-    }
+    "ghcr.io/devcontainers/features/python:1": {"version": "3.12"},
+    "ghcr.io/devcontainers/features/node:1": {"version": "20"},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },
-  "runArgs": [
-    "--runtime=nvidia",
-    "--privileged"
-  ],
-  "postCreateCommand": "bash .devcontainer/post-init.sh",
   "customizations": {
     "vscode": {
       "extensions": [
-        "quantumcode.vscode-quantum-syntax",
-        "omniprofit.holographic-preview"
-      ]
+        "ms-python.python", "ms-python.vscode-pylance",
+        "charliermarsh.ruff", "bradlc.vscode-tailwindcss",
+        "dbaeumer.vscode-eslint", "esbenp.prettier-vscode",
+        "GitHub.copilot", "GitHub.copilot-chat",
+        "ms-azuretools.vscode-docker", "eamodio.gitlens"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "editor.formatOnSave": true,
+        "[python]": {"editor.defaultFormatter": "charliermarsh.ruff"},
+        "ruff.enable": true
+      }
     }
-  }
+  },
+  "forwardPorts": [8000, 5432, 6379],
+  "postCreateCommand": "pip install -r requirements.txt && alembic upgrade head",
+  "remoteUser": "vscode"
+}
