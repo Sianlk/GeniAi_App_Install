@@ -1,9 +1,9 @@
-// app/index.tsx — Expo Router entry (root redirect)
-// GeniAI | Your full-stack AI platform
+// app/index.tsx — Expo Router entry
+// GeniAI
 import { Redirect } from 'expo-router';
 import { useAuthStore } from '../src/store/authStore';
 
 export default function Index() {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  return <Redirect href={isAuthenticated ? '/(tabs)/' : '/(auth)/login'} />;
+  const isAuth = useAuthStore((s) => s.isAuthenticated);
+  return <Redirect href={isAuth ? '/(tabs)/' : '/(auth)/login'} />;
 }
