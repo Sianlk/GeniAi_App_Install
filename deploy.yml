@@ -23,13 +23,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push hybrid app image
+      - name: Build and push app image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: Dockerfile
           push: true
-          tags: ghcr.io/yourorg/inhouse_app:latest
+          tags: ghcr.io/sianlk/geniai:latest
+          build-args: |
+            APP_VERSION=${{ github.sha }}
+            BUILD_TIME=${{ github.event.head_commit.timestamp }}
 
       - name: Build and push quantum core image
         uses: docker/build-push-action@v5
@@ -37,7 +40,7 @@ jobs:
           context: .
           file: Dockerfile.quantum
           push: true
-          tags: ghcr.io/yourorg/quantum_core:latest
+          tags: ghcr.io/sianlk/geniai-quantum:latest
 
       - name: Deploy to server (SSH)
         uses: appleboy/ssh-action@v1.0.3
@@ -46,7 +49,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            docker pull ghcr.io/yourorg/inhouse_app:latest
-            docker pull ghcr.io/yourorg/quantum_core:latest
+            docker pull ghcr.io/sianlk/geniai:latest
+            docker pull ghcr.io/sianlk/geniai-quantum:latest
             docker compose down
             docker compose up -d --build

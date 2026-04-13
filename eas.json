@@ -7,40 +7,46 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_ENV": "development"
+        "EXPO_PUBLIC_ENV": "development",
+        "EXPO_PUBLIC_API_URL": "http://localhost:8000"
       }
     },
     "preview": {
       "distribution": "internal",
       "ios": {
-        "simulator": false
+        "simulator": false,
+        "credentialsSource": "remote"
+      },
+      "android": {
+        "credentialsSource": "remote"
       },
       "env": {
-        "EXPO_PUBLIC_ENV": "staging"
+        "EXPO_PUBLIC_ENV": "staging",
+        "EXPO_PUBLIC_API_URL": "https://geniai-production.ondigitalocean.app"
       }
     },
     "production": {
       "autoIncrement": true,
-      "env": {
-        "EXPO_PUBLIC_ENV": "production"
-      },
       "ios": {
+        "credentialsSource": "remote",
         "resourceClass": "m1-medium"
       },
       "android": {
-        "buildType": "apk"
+        "credentialsSource": "remote",
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_ENV": "production",
+        "EXPO_PUBLIC_API_URL": "https://geniai.sianlk.com"
       }
     }
   },
   "submit": {
     "production": {
       "ios": {
-        "appleId": "APPLE_ID_EMAIL",
-        "ascAppId": "REPLACE_ASC_APP_ID",
-        "appleTeamId": "REPLACE_APPLE_TEAM_ID"
+        "credentialsSource": "remote"
       },
       "android": {
-        "serviceAccountKeyPath": "./google-play-key.json",
         "track": "internal"
       }
     }
