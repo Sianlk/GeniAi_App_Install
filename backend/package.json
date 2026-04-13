@@ -4,7 +4,11 @@
   "type": "module",
   "main": "dist/server.js",
   "scripts": {
+    "validate:secrets": "node ../scripts/validate_secrets.mjs --profile runtime --env-file ../.env",
+    "validate:deploy-secrets": "node ../scripts/validate_secrets.mjs --profile deploy --env-file ../.env",
+    "predev": "npm run validate:secrets",
     "dev": "tsx watch src/server.ts",
+    "prestart": "npm run validate:secrets",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "worker": "tsx src/queues/worker.ts",

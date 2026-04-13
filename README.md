@@ -47,6 +47,15 @@ cd ..
 docker compose up --build -d
 ```
 
+## Secret Management
+- Validate runtime secrets before backend start:
+	- `node scripts/validate_secrets.mjs --profile runtime --env-file .env`
+- Validate deployment-only secrets:
+	- `node scripts/validate_secrets.mjs --profile deploy --env-file .env`
+- Import real secrets safely into `.env` from process/user/machine env vars or `.secrets.local.env`:
+	- PowerShell: `pwsh ./scripts/import_secrets.ps1`
+	- Bash: `bash ./scripts/import_secrets.sh`
+
 ## Deploy to DigitalOcean
 ```bash
 bash scripts/deploy_digitalocean.sh
@@ -56,6 +65,10 @@ bash scripts/deploy_digitalocean.sh
 - `.github/workflows/ci-cd.yml` builds backend and mobile matrix
 - deploys unified stack to DigitalOcean App Platform on push to `main`
 - runs Snyk dependency scan and fails build on high severity
+
+## Verify All 11 Apps (Spec)
+- Runs the same checks required by CI for every app (`lint` + `typecheck`):
+	- `pwsh ./scripts/verify_mobile_matrix.ps1`
 
 ## App Factory
 Create/fork all app packages from template:

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ -f .env ]; then
+if { [ -z "${DIGITALOCEAN_ACCESS_TOKEN:-}" ] || [ -z "${DIGITALOCEAN_APP_ID:-}" ]; } && [ -f .env ]; then
   set -a
   source .env
   set +a
@@ -9,6 +9,11 @@ fi
 
 if [ -z "${DIGITALOCEAN_ACCESS_TOKEN:-}" ] || [ -z "${DIGITALOCEAN_APP_ID:-}" ]; then
   echo "DIGITALOCEAN_ACCESS_TOKEN and DIGITALOCEAN_APP_ID are required"
+  exit 1
+fi
+
+if [[ "${DIGITALOCEAN_ACCESS_TOKEN}" =~ xxx|\.\.\.|changeme|replace_me|token_here|dop_v1_xxx ]] || [[ "${DIGITALOCEAN_APP_ID}" =~ xxx|\.\.\.|changeme|replace_me|token_here|app-xxxx ]]; then
+  echo "DigitalOcean secrets look like placeholders; aborting deployment"
   exit 1
 fi
 

@@ -20,6 +20,42 @@ services:
         value: "8080"
       - key: SUPER_ADMIN_EMAIL
         value: hosturserver@gmail.com
+      - key: DATABASE_URL
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${DATABASE_URL}
+      - key: REDIS_URL
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${REDIS_URL}
+      - key: JWT_ACCESS_SECRET
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${JWT_ACCESS_SECRET}
+      - key: JWT_REFRESH_SECRET
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${JWT_REFRESH_SECRET}
+      - key: STRIPE_SECRET_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${STRIPE_SECRET_KEY}
+      - key: STRIPE_WEBHOOK_SECRET
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${STRIPE_WEBHOOK_SECRET}
+      - key: OPENAI_API_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${OPENAI_API_KEY}
+      - key: GITHUB_TOKEN
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${GITHUB_TOKEN}
+      - key: SNYK_TOKEN
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${SNYK_TOKEN}
 
 workers:
   - name: workforce
@@ -28,6 +64,39 @@ workers:
     run_command: npm run worker
     instance_count: 1
     instance_size_slug: basic-xs
+    envs:
+      - key: NODE_ENV
+        value: production
+      - key: SUPER_ADMIN_EMAIL
+        value: hosturserver@gmail.com
+      - key: DATABASE_URL
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${DATABASE_URL}
+      - key: REDIS_URL
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${REDIS_URL}
+      - key: JWT_ACCESS_SECRET
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${JWT_ACCESS_SECRET}
+      - key: JWT_REFRESH_SECRET
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${JWT_REFRESH_SECRET}
+      - key: STRIPE_SECRET_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${STRIPE_SECRET_KEY}
+      - key: STRIPE_WEBHOOK_SECRET
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${STRIPE_WEBHOOK_SECRET}
+      - key: OPENAI_API_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${OPENAI_API_KEY}
 
 databases:
   - name: unified-ai-db
