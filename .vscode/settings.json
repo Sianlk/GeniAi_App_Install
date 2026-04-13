@@ -1,7 +1,0 @@
-{
-    "editor.wordWrap": "on",
-    "aws.telemetry": false,
-    "githubPullRequests.ignoredPullRequestBranches": [
-        "main"
-    ]
-}

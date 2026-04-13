@@ -1,36 +1,54 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: inhouse_app
-    ports:
-      - "8000:8000"
+  postgres:
+    image: postgres:16
     environment:
-      - NODE_ENV=production
-      - PYTHONUNBUFFERED=1
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      POSTGRES_DB: unified_ai
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
 
-  quantum:
-    build:
-      context: .
-      dockerfile: Dockerfile.quantum
-    container_name: quantum_core
+  redis:
+    image: redis:7-alpine
     ports:
-      - "9000:9000"
-    environment:
-      - AI_CORE=phi-3-quantum-4k
-      - OMNI_LICENSE=${OMNI_LICENSE}
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      - "6379:6379"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "8080:8080"
+
+  workforce:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: ["npm", "run", "worker"]
+    env_file:
+      - .env
+    depends_on:
+      - backend
+      - redis
+      - postgres
+
+  nginx:
+    image: nginx:1.27-alpine
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    volumes:
+      - ./infra/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+volumes:
+  pg_data:

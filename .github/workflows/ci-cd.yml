@@ -1,0 +1,117 @@
+name: Unified CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend-quality:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test
+      - run: npm run build
+
+  mobile-matrix-quality:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app:
+          - sianlk-core
+          - geniai-persona-studio
+          - ai-aesthetics-lab
+          - ai-business-brain
+          - aiblty-coach
+          - aibltycode-studio
+          - buildquote-pro
+          - comppropdata-intelligence
+          - terminalai-ops
+          - gitgit-copilot
+          - autonomous-trading-coach
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm i -g pnpm
+      - run: |
+          cd mobile/apps/${{ matrix.app }}
+          pnpm install --frozen-lockfile=false
+          pnpm run lint
+          pnpm run typecheck
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: test
+          args: --all-projects --severity-threshold=high
+
+  performance-slo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Start backend dependencies
+        run: docker compose up -d postgres redis
+      - name: Start backend service
+        run: |
+          cd backend
+          npm ci
+          npm run prisma:generate
+          npm run build
+          npm run start &
+      - name: Wait for health
+        run: |
+          for i in {1..40}; do
+            curl -fsS http://localhost:8080/health && exit 0
+            sleep 2
+          done
+          exit 1
+      - name: Enforce p95 gate
+        env:
+          PERF_BASE_URL: http://localhost:8080
+          PERF_MAX_P95_MS: 1800
+          PERF_ITERATIONS: 35
+        run: node scripts/perf_gate.mjs
+
+  deploy-digitalocean:
+    if: github.ref == 'refs/heads/main'
+    needs: [backend-quality, mobile-matrix-quality, security-scan, performance-slo]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trigger deployment
+        env:
+          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          DIGITALOCEAN_APP_ID: ${{ secrets.DIGITALOCEAN_APP_ID }}
+        run: bash scripts/deploy_digitalocean.sh
+
+  fastlane-submit:
+    if: github.ref == 'refs/heads/main'
+    needs: [deploy-digitalocean]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+      - run: gem install fastlane
+      - run: fastlane ios release
+      - run: fastlane android release

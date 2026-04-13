@@ -1,0 +1,20 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Build and submit iOS app"
+  lane :release do
+    build_app(
+      workspace: "mobile/apps/autonomous-trading-coach/ios/AutonomousTradingCoach.xcworkspace",
+      scheme: "AutonomousTradingCoach"
+    )
+    upload_to_app_store(skip_metadata: true, skip_screenshots: true)
+  end
+end
+
+platform :android do
+  desc "Build and submit Android app"
+  lane :release do
+    gradle(task: "bundle", project_dir: "mobile/apps/autonomous-trading-coach/android")
+    upload_to_play_store(track: "production", release_status: "draft")
+  end
+end
