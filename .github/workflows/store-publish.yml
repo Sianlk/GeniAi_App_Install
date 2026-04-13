@@ -1,5 +1,8 @@
 name: EAS Build & Store Publish
 
+permissions:
+  contents: read
+
 on:
   push:
     tags:
