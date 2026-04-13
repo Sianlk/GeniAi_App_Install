@@ -1,0 +1,88 @@
+name: EAS Build & Store Publish
+
+permissions:
+  contents: read
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to build'
+        required: true
+        default: 'all'
+        type: choice
+        options: [all, ios, android]
+      profile:
+        description: 'EAS build profile'
+        required: true
+        default: 'production'
+        type: choice
+        options: [development, preview, production]
+      submit:
+        description: 'Submit to stores after build?'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  build-and-publish:
+    name: EAS Build & Publish
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Expo & EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Determine build params
+        id: params
+        run: |
+          echo "platform=${{ github.event.inputs.platform || 'all' }}" >> $GITHUB_OUTPUT
+          echo "profile=${{ github.event.inputs.profile || 'production' }}" >> $GITHUB_OUTPUT
+
+      - name: EAS Build
+        run: |
+          eas build \
+            --platform ${{ steps.params.outputs.platform }} \
+            --profile  ${{ steps.params.outputs.profile }} \
+            --non-interactive \
+            --wait
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: OTA Update
+        if: steps.params.outputs.profile == 'production'
+        run: eas update --channel production --message "ci:${{ github.sha }}" --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Submit to App Stores
+        if: >
+          (startsWith(github.ref, 'refs/tags/') || github.event.inputs.submit == 'true') &&
+          steps.params.outputs.profile == 'production'
+        run: |
+          eas submit \
+            --platform ${{ steps.params.outputs.platform }} \
+            --profile  production \
+            --non-interactive \
+            --wait
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          EXPO_APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.EXPO_APPLE_APP_SPECIFIC_PASSWORD }}
+          EXPO_APPLE_TEAM_ID: ${{ secrets.EXPO_APPLE_TEAM_ID }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}

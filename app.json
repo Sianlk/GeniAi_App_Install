@@ -1,0 +1,60 @@
+{
+  "expo": {
+    "name": "GeniAI",
+    "slug": "geniai",
+    "version": "1.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#7C3AED"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sianlk.geniai",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Camera access for AI analysis",
+        "NSMicrophoneUsageDescription": "Voice input for AI assistant",
+        "NSPhotoLibraryUsageDescription": "Photo access for AI features"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#7C3AED"
+      },
+      "package": "com.sianlk.geniai",
+      "versionCode": 2,
+      "permissions": ["CAMERA", "RECORD_AUDIO", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE", "VIBRATE", "RECEIVE_BOOT_COMPLETED"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      ["expo-router", {"origin": "https://geniai.sianlk.com"}],
+      ["expo-notifications", {"icon": "./assets/icon.png", "color": "#8B5CF6", "sounds": ["./assets/notification.wav"]}],
+      ["expo-secure-store"],
+      ["expo-build-properties", {"ios": {"newArchEnabled": true}, "android": {"newArchEnabled": true}}],
+      ["@sentry/react-native/expo", {"organization": "sianlk", "project": "geniai"}]
+    ],
+    "extra": {
+      "router": {"origin": "https://geniai.sianlk.com"},
+      "eas": {"projectId": "5181c4ee-751b-4a09-81d5-6b1084a1b63f"}
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/5181c4ee-751b-4a09-81d5-6b1084a1b63f",
+      "enabled": true,
+      "fallbackToCacheTimeout": 0,
+      "checkAutomatically": "ON_LOAD"
+    },
+    "owner": "sianlk"
+  }
+}

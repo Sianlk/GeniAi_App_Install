@@ -1,0 +1,54 @@
+{
+  "cli": {
+    "version": ">= 10.0.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_ENV": "development",
+        "EXPO_PUBLIC_API_URL": "http://localhost:8000"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "ios": {
+        "simulator": false,
+        "credentialsSource": "remote"
+      },
+      "android": {
+        "credentialsSource": "remote"
+      },
+      "env": {
+        "EXPO_PUBLIC_ENV": "staging",
+        "EXPO_PUBLIC_API_URL": "https://geniai-production.ondigitalocean.app"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "ios": {
+        "credentialsSource": "remote",
+        "resourceClass": "m1-medium"
+      },
+      "android": {
+        "credentialsSource": "remote",
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_ENV": "production",
+        "EXPO_PUBLIC_API_URL": "https://geniai.sianlk.com"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "credentialsSource": "remote"
+      },
+      "android": {
+        "track": "internal"
+      }
+    }
+  }
+}

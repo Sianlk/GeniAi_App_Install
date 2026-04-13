@@ -1,0 +1,103 @@
+name: Deploy to DigitalOcean App Platform
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  APP_NAME: geniai-production
+
+jobs:
+  deploy:
+    name: Deploy to DigitalOcean
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://geniai.sianlk.com
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Write app spec
+        run: |
+          cat > app.yaml << 'EOF'
+          name: geniai-production
+          region: nyc
+          features:
+            - buildpack-stack=ubuntu-22
+          services:
+            - name: api
+              github:
+                repo: Sianlk/GeniAi_App_Install
+                branch: main
+                deploy_on_push: true
+              build_command: pip install -r requirements.txt
+              run_command: uvicorn api.main:app --host 0.0.0.0 --port 8080 --workers 2
+              source_dir: /
+              http_port: 8080
+              instance_count: 1
+              instance_size_slug: apps-s-1vcpu-0.5gb
+              health_check:
+                http_path: /api/v1/health
+                initial_delay_seconds: 20
+                period_seconds: 10
+                timeout_seconds: 5
+                success_threshold: 1
+                failure_threshold: 3
+              envs:
+                - key: DATABASE_URL
+                  scope: RUN_TIME
+                  type: SECRET
+                - key: SECRET_KEY
+                  scope: RUN_TIME
+                  type: SECRET
+                - key: OPENAI_API_KEY
+                  scope: RUN_TIME
+                  type: SECRET
+                - key: REDIS_URL
+                  scope: RUN_TIME
+                  type: SECRET
+                - key: SENTRY_DSN
+                  scope: RUN_TIME
+                  type: SECRET
+                - key: ENVIRONMENT
+                  scope: RUN_TIME
+                  value: production
+                - key: APP_NAME
+                  scope: RUN_TIME
+                  value: GeniAI
+                - key: ALLOWED_ORIGINS
+                  scope: RUN_TIME
+                  value: https://geniai.sianlk.com,https://app.sianlk.com,https://sianlk.com
+              routes:
+                - path: /
+          databases:
+            - name: db
+              engine: PG
+              version: "16"
+              size: db-s-dev-database
+              num_nodes: 1
+            - name: cache
+              engine: REDIS
+              version: "7"
+              size: db-s-dev-database
+              num_nodes: 1
+          EOF
+
+      - name: Deploy App Platform spec
+        run: |
+          APP_ID=$(doctl apps list --no-header --format ID,Name 2>/dev/null | grep "${{ env.APP_NAME }}" | awk '{print $1}' || true)
+          if [ -z "$APP_ID" ]; then
+            echo "Creating new DigitalOcean app..."
+            doctl apps create --spec app.yaml --wait
+          else
+            echo "Updating app $APP_ID..."
+            doctl apps update "$APP_ID" --spec app.yaml --wait
+            doctl apps create-deployment "$APP_ID" --wait
+          fi

@@ -1,0 +1,34 @@
+{
+  "name": "GeniAI",
+  "short_name": "GeniAI",
+  "description": "GeniAI is the all-in-one artificial intelligence platform for creators, entrepreneurs, and enterprises \u2014 combining chat, image, code, and automation in one app.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF5FF",
+  "theme_color": "#8B5CF6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": [
+    "productivity",
+    "utilities"
+  ],
+  "screenshots": []
+}
