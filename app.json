@@ -44,13 +44,13 @@
     ],
     "extra": {
       "router": {"origin": "https://geniai.sianlk.com"},
-      "eas": {"projectId": "00000000-0000-0000-0000-000000000000"}
+      "eas": {"projectId": "5181c4ee-751b-4a09-81d5-6b1084a1b63f"}
     },
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/00000000-0000-0000-0000-000000000000",
+      "url": "https://u.expo.dev/5181c4ee-751b-4a09-81d5-6b1084a1b63f",
       "enabled": true,
       "fallbackToCacheTimeout": 0,
       "checkAutomatically": "ON_LOAD"

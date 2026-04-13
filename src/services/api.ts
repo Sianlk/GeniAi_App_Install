@@ -1,10 +1,9 @@
-// Unified API Client — connects to Sianlk shared backend
-// All 11 apps share one $5/mo DigitalOcean instance
+// Unified API Client — GeniAI backend
+// Base URL driven by EXPO_PUBLIC_API_URL environment variable
 
 const API_BASE =
-  __DEV__
-    ? "http://localhost:8000"
-    : "https://sianlk.com";
+  process.env.EXPO_PUBLIC_API_URL ??
+  (__DEV__ ? "http://localhost:8000" : "https://geniai.sianlk.com");
 
 export { API_BASE };
 
@@ -43,20 +42,22 @@ export async function apiGet<T>(path: string): Promise<T> {
   return res.json();
 }
 
-// Auth helpers
+// Auth helpers — endpoints match /api/v1/auth/* and /api/v1/users/*
 export const auth = {
-  register: (email: string, password: string, fullName = "", appSlug = "geniai") =>
-    apiPost<{ access_token: string; user_id: string; plan: string }>(
-      "/api/auth/register", { email, password, full_name: fullName, app_slug: appSlug }
+  register: (email: string, password: string, username = "", fullName = "") =>
+    apiPost<{ id: string; email: string; username: string }>(
+      "/api/v1/auth/register", { email, password, username, full_name: fullName }
     ),
   login: (email: string, password: string) => {
     const form = new URLSearchParams({ username: email, password });
-    return apiFetch('/api/auth/token', {
+    return apiFetch('/api/v1/auth/login', {
       method: 'POST', body: form.toString(),
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    }).then(r => r.json() as Promise<{ access_token: string; plan: string }>);
+    }).then(r => r.json() as Promise<{ access_token: string; refresh_token: string }>);
   },
-  me: () => apiGet<{ id: string; email: string; plan: string; app_slug: string }>("/api/auth/me"),
+  me: () => apiGet<{ id: string; email: string; username: string; full_name: string; role: string; subscription_tier: string }>("/api/v1/users/me"),
+  logout: (refreshToken: string) =>
+    apiPost<{ message: string }>("/api/v1/auth/logout", { refresh_token: refreshToken }),
 };
 
 // AI helpers
@@ -76,17 +77,6 @@ export const analyticsApi = {
   batch: (events: Array<{ event_name: string; properties?: Record<string, unknown> }>) =>
     apiFetch('/api/analytics/batch', {
       method: 'POST',
-      body: JSON.stringify({
-        events: events.map(e => ({ ...e, app_slug: "geniai" }))
-      }),
-    }),
-};
-
-// Payments
-export const paymentsApi = {
-  plans: () => apiGet<{ plans: Array<{ id: string; name: string; price: number }> }>('/api/payments/plans'),
-  checkout: (plan: string) =>
-    apiPost<{ url: string }>("/api/payments/checkout", {
-      plan, success_url: "https://sianlk.com/success", cancel_url: "https://sianlk.com/pricing"
-    }),
+      body: JSON.stringify({ events: events.map(e => ({ ...e, app_slug: "geniai" })) }),
+    }).then(r => r.json()),
 };
