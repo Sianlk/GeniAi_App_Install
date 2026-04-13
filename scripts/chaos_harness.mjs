@@ -66,7 +66,11 @@ async function worker() {
       r = await measure(`${BASE_URL}/api/apps/predict`, {
         method: 'POST',
         headers: authHeaders,
-        body: JSON.stringify({ appSlug: 'autonomous-trading-coach', input: 'chaos-test' })
+        body: JSON.stringify({
+          appSlug: 'autonomous-trading-coach',
+          features: [0.92, 0.71, 0.38, 0.84],
+          scenario: 'chaos-load-profile'
+        })
       });
     } else {
       r = await measure(`${BASE_URL}/api/metrics/ingest`, {
