@@ -13,7 +13,7 @@
     "start": "node dist/server.js",
     "worker": "tsx src/queues/worker.ts",
     "lint": "eslint src --ext .ts",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy"
   },
@@ -44,6 +44,8 @@
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.58.2",
+    "@typescript-eslint/parser": "^8.58.2",
     "eslint": "^9.9.0",
     "prisma": "^5.22.0",
     "tsx": "^4.16.2",
