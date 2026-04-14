@@ -1,5 +1,0 @@
-{
-  "environment": "development",
-  "debug_mode": true,
-  "api_endpoint": "http://localhost:5000"
-}

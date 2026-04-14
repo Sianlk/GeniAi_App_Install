@@ -1,3 +1,0 @@
-git add GenesisOS/
-git commit -m "feat: Initial GenesisOS core files"
-git push origin main

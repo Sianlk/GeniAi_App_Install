@@ -1,0 +1,170 @@
+name: Unified CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend-quality:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Generate backend env from GitHub secrets
+        run: |
+          cat > .env << 'EOF'
+          NODE_ENV=production
+          PORT=8080
+          DATABASE_URL=postgresql://postgres:postgres@localhost:5432/unified_ai
+          REDIS_URL=redis://localhost:6379
+          JWT_ACCESS_SECRET=${{ secrets.JWT_ACCESS_SECRET }}
+          JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}
+          JWT_ACCESS_TTL=15m
+          JWT_REFRESH_TTL=30d
+          LOGO_URL=${{ secrets.LOGO_URL }}
+          SUPER_ADMIN_EMAIL=hosturserver@gmail.com
+          STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          GITHUB_OWNER=Sianlk
+          GITHUB_REPO=GeniAi_App_Install
+          OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+          SNYK_TOKEN=${{ secrets.SNYK_TOKEN }}
+          DIGITALOCEAN_ACCESS_TOKEN=${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          DIGITALOCEAN_APP_ID=${{ secrets.DIGITALOCEAN_APP_ID }}
+          EOF
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test
+      - run: npm run build
+
+  mobile-matrix-quality:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app:
+          - sianlk-core
+          - geniai-persona-studio
+          - ai-aesthetics-lab
+          - ai-business-brain
+          - aiblty-coach
+          - aibltycode-studio
+          - buildquote-pro
+          - comppropdata-intelligence
+          - terminalai-ops
+          - gitgit-copilot
+          - autonomous-trading-coach
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm i -g pnpm
+      - run: |
+          cd mobile/apps/${{ matrix.app }}
+          pnpm install --frozen-lockfile=false
+          pnpm run lint
+          pnpm run typecheck
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: test
+          args: --all-projects --severity-threshold=high
+
+  performance-slo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Generate backend env from GitHub secrets
+        run: |
+          cat > .env << 'EOF'
+          NODE_ENV=production
+          PORT=8080
+          DATABASE_URL=postgresql://postgres:postgres@localhost:5432/unified_ai
+          REDIS_URL=redis://localhost:6379
+          JWT_ACCESS_SECRET=${{ secrets.JWT_ACCESS_SECRET }}
+          JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}
+          JWT_ACCESS_TTL=15m
+          JWT_REFRESH_TTL=30d
+          LOGO_URL=${{ secrets.LOGO_URL }}
+          SUPER_ADMIN_EMAIL=hosturserver@gmail.com
+          STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          GITHUB_OWNER=Sianlk
+          GITHUB_REPO=GeniAi_App_Install
+          OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+          SNYK_TOKEN=${{ secrets.SNYK_TOKEN }}
+          DIGITALOCEAN_ACCESS_TOKEN=${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          DIGITALOCEAN_APP_ID=${{ secrets.DIGITALOCEAN_APP_ID }}
+          EOF
+      - name: Start backend dependencies
+        run: docker compose up -d postgres redis
+      - name: Start backend service
+        run: |
+          cd backend
+          npm ci
+          npm run prisma:generate
+          npm run build
+          npm run start &
+      - name: Wait for health
+        run: |
+          for i in {1..40}; do
+            curl -fsS http://localhost:8080/health && exit 0
+            sleep 2
+          done
+          exit 1
+      - name: Enforce p95 gate
+        env:
+          PERF_BASE_URL: http://localhost:8080
+          PERF_MAX_P95_MS: 1800
+          PERF_ITERATIONS: 35
+        run: node scripts/perf_gate.mjs
+
+  deploy-digitalocean:
+    if: github.ref == 'refs/heads/main'
+    needs: [backend-quality, mobile-matrix-quality, security-scan, performance-slo]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate required deployment secrets
+        env:
+          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          DIGITALOCEAN_APP_ID: ${{ secrets.DIGITALOCEAN_APP_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: node scripts/validate_secrets.mjs --profile deploy --env-file .env
+      - name: Trigger deployment
+        env:
+          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          DIGITALOCEAN_APP_ID: ${{ secrets.DIGITALOCEAN_APP_ID }}
+        run: bash scripts/deploy_digitalocean.sh
+
+  fastlane-submit:
+    if: github.ref == 'refs/heads/main'
+    needs: [deploy-digitalocean]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+      - run: gem install fastlane
+      - run: fastlane ios release
+      - run: fastlane android release

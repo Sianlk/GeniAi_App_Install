@@ -1,115 +1,77 @@
-# GeniAI — Your full-stack AI platform
+# Unified 11-App AI Ecosystem
 
-![Version](https://img.shields.io/badge/version-1.1.0-blue?style=flat-square)
-![Platform](https://img.shields.io/badge/platform-iOS%20%7C%20Android%20%7C%20Web-8B5CF6.svg?style=flat-square)
-![AI](https://img.shields.io/badge/AI-GPT--4o%20%7C%20Claude-%238B5CF6?style=flat-square)
-![Deploy](https://img.shields.io/badge/deploy-DigitalOcean-0080FF?style=flat-square&logo=digitalocean)
-![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
-[![CI](https://github.com/Sianlk/geniai/workflows/backend-ci/badge.svg)](https://github.com/Sianlk/geniai/actions)
+Production-ready monorepo blueprint for 11 cross-platform apps (iOS, Android, Web via Expo) sharing one backend on DigitalOcean.
 
-> **Your full-stack AI platform** — Built by [Sianlk](https://sianlk.com) using proprietary AI workforce technology.
+## Stack
+- Backend: Node.js, Fastify, Prisma, PostgreSQL, Redis, BullMQ, LangChain, Zod
+- Mobile/Web: Expo + React Native + TensorFlow.js + Three.js
+- Admin UI: AdminJS + custom super-admin endpoints
+- Security: Helmet, CORS policy, rate limiting, JWT rotation, audit logs, Snyk scanning
+- CI/CD: GitHub Actions -> Docker build -> DigitalOcean deploy
+- Monetization: Stripe Connect GBP + unified credits ledger + monthly 5% compound rewards
 
-## Features
-`AI Orchestrator` `Agent Workforce` `Multi-Modal AI` `Knowledge Base` `AI Automation`
+## 11 Apps
+1. Sianlk Core Workspace
+2. GeniAI Persona Studio
+3. AI Aesthetics Lab
+4. AI Business Brain
+5. Aiblty Coach
+6. AibltyCode Studio
+7. BuildQuote Pro
+8. CompPropData Intelligence
+9. TerminalAI Ops
+10. GitGit Copilot
+11. Autonomous Trading Coach (complex template included)
 
-## Tech Stack
+Each app receives one or more unfair-advantage capabilities:
+- real-time collaboration with WebSockets
+- offline-first sync and conflict resolution
+- predictive inference with TensorFlow.js
+- immersive AR/3D visualizations with React Three Fiber
 
-| Layer | Technology |
-|-------|-----------|
-| Mobile | React Native + Expo SDK 52, Expo Router v4 |
-| AI Engine | GPT-4o, Claude 3.5 Sonnet, Custom embeddings |
-| AI Workforce | Proprietary multi-agent orchestration |
-| Backend | FastAPI 0.115, Python 3.12, PostgreSQL 16, Redis 7 |
-| Infrastructure | DigitalOcean App Platform + Container Registry |
-| Monitoring | Sentry, Prometheus, Grafana |
-| CI/CD | GitHub Actions → DigitalOcean (auto-deploy on push) |
+## Super Admin
+Hardcoded super admin identity: `hosturserver@gmail.com`
+- full user control across all apps
+- per-user/per-app feature injection
+- live logs and AI workforce suggestions
+- immutable audit trail
 
 ## Quick Start
-
 ```bash
-# Mobile
+cp .env.example .env
+cd backend
 npm install
-npx expo start
-
-# Backend  
-pip install -r requirements.txt
-uvicorn app.main:app --reload
-
-# Deploy to DigitalOcean
-doctl auth init
-bash .do/deploy.sh
+npm run prisma:generate
+npm run prisma:migrate
+cd ..
+docker compose up --build -d
 ```
 
-## DigitalOcean Deployment
+## Secret Management
+- Validate runtime secrets before backend start:
+	- `node scripts/validate_secrets.mjs --profile runtime --env-file .env`
+- Validate deployment-only secrets:
+	- `node scripts/validate_secrets.mjs --profile deploy --env-file .env`
+- Import real secrets safely into `.env` from process/user/machine env vars or `.secrets.local.env`:
+	- PowerShell: `pwsh ./scripts/import_secrets.ps1`
+	- Bash: `bash ./scripts/import_secrets.sh`
 
-This app is pre-configured for instant DigitalOcean App Platform deployment:
-
-1. **Create DO account**: https://cloud.digitalocean.com
-2. **Install doctl**: `brew install doctl` (macOS) or see [docs](https://docs.digitalocean.com/reference/doctl/)
-3. **Authenticate**: `doctl auth init`
-4. **Deploy**: `bash .do/deploy.sh`
-
-Or import `.do/app.yaml` directly in the DigitalOcean console.
-
-**Required Secrets** (set in DO App Platform dashboard):
-- `DATABASE_URL` — PostgreSQL connection string
-- `SECRET_KEY` — 64-char random string
-- `OPENAI_API_KEY` — OpenAI API key
-- `SENTRY_DSN` — Sentry project DSN
-
-## API Documentation
-
-Live API docs: `https://geniai.sianlk.com/docs`
-
-### Key Endpoints
-```
-GET  /health              — Health check
-GET  /                    — Service info  
-POST /api/ai/complete     — AI completion (domain: AI platform)
-POST /api/ai/agent        — AI workforce agent task
-WS   /ws/ai               — Real-time AI streaming
-POST /api/analytics/batch — Analytics ingestion
-POST /api/users/push-token — Push notification registration
+## Deploy to DigitalOcean
+```bash
+bash scripts/deploy_digitalocean.sh
 ```
 
-## Architecture
+## CI/CD
+- `.github/workflows/ci-cd.yml` builds backend and mobile matrix
+- deploys unified stack to DigitalOcean App Platform on push to `main`
+- runs Snyk dependency scan and fails build on high severity
 
+## Verify All 11 Apps (Spec)
+- Runs the same checks required by CI for every app (`lint` + `typecheck`):
+	- `pwsh ./scripts/verify_mobile_matrix.ps1`
+
+## App Factory
+Create/fork all app packages from template:
+```bash
+node scripts/scaffold-apps.mjs
 ```
-Mobile (Expo Router)
-  ├── app/(tabs)/index.tsx  — AI-powered home
-  ├── app/(tabs)/ai.tsx     — AI Workforce agents
-  ├── src/agents/           — AIWorkforceAgent
-  ├── src/services/         — AI, Analytics, Notifications
-  └── src/theme/            — Design system
-
-Backend (FastAPI)
-  ├── app/main.py           — Routes + WebSocket
-  ├── alembic/              — DB migrations
-  └── tests/                — pytest suite
-
-Infrastructure
-  ├── .do/app.yaml          — DO App Platform spec
-  ├── .do/deploy.sh         — One-click deploy
-  ├── k8s/                  — Kubernetes manifests
-  ├── Dockerfile            — Production container
-  └── docker-compose.yml    — Local development
-```
-
-## AI Workforce System
-
-GeniAI uses proprietary AI workforce agents (created by Sianlk):
-
-- **Analyst Agent** — Expert AI platform analysis with reasoning chains
-- **Advisor Agent** — Strategic recommendations and forecasting
-- **Automator Agent** — Autonomous task execution for AI platform workflows
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md). All contributions welcome!
-
-## License
-
-MIT © [Sianlk Ltd](https://sianlk.com)
-
----
-*GeniAI is built by Sianlk — pioneer in AI-powered AI platform technology.*
