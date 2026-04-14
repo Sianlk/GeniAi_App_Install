@@ -1,36 +1,37 @@
 {
-    "name":  "@unified/aibltycode-studio",
-    "version":  "1.0.0",
-    "private":  true,
-    "main":  "node_modules/expo/AppEntry.js",
-    "scripts":  {
-                    "start":  "expo start",
-                    "android":  "expo run:android",
-                    "ios":  "expo run:ios",
-                    "web":  "expo start --web",
-                    "lint":  "pnpm dlx eslint . --ext .js,.jsx --no-config-lookup",
-                    "typecheck":  "tsc --noEmit"
-                },
-    "dependencies":  {
-                         "@react-native-async-storage/async-storage":  "^1.23.1",
-                         "@react-three/fiber":  "^8.16.8",
-                         "@tensorflow/tfjs":  "^4.20.0",
-                         "expo":  "^51.0.22",
-                         "expo-gl":  "~14.0.2",
-                         "expo-status-bar":  "~1.12.1",
-                         "react":  "18.2.0",
-                         "react-dom":  "18.2.0",
-                         "react-native":  "0.74.3",
-                         "react-native-web":  "~0.19.13",
-                         "three":  "^0.166.1"
-                     },
-    "devDependencies":  {
-                            "@types/react":  "~18.2.79",
-                            "@types/three":  "^0.166.0",
-                            "typescript":  "^5.5.4"
-                        },
-    "engines":  {
-                    "node":  "\u003e=20"
-                }
+    "name": "@unified/aibltycode-studio",
+    "version": "1.0.0",
+    "private": true,
+    "main": "index.js",
+    "scripts": {
+        "start": "expo start",
+        "android": "expo run:android",
+        "ios": "expo run:ios",
+        "web": "expo start --web",
+        "lint": "pnpm dlx eslint . --ext .js,.jsx --no-config-lookup",
+        "typecheck": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@babel/runtime": "^7.29.2",
+        "@expo/metro-runtime": "~3.2.3",
+        "@react-native-async-storage/async-storage": "^1.23.1",
+        "@react-three/fiber": "^8.16.8",
+        "@tensorflow/tfjs": "^4.20.0",
+        "expo": "^51.0.22",
+        "expo-gl": "~14.0.2",
+        "expo-status-bar": "~1.12.1",
+        "react": "18.2.0",
+        "react-dom": "18.2.0",
+        "react-native": "0.74.3",
+        "react-native-web": "~0.19.13",
+        "three": "^0.166.1"
+    },
+    "devDependencies": {
+        "@types/react": "~18.2.79",
+        "@types/three": "^0.166.0",
+        "typescript": "^5.5.4"
+    },
+    "engines": {
+        "node": ">=20"
+    }
 }
-
