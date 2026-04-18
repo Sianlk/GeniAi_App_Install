@@ -5,7 +5,7 @@ import fs from 'node:fs';
 
 const envCandidates = [
   path.resolve(process.cwd(), '.env'),
-  path.resolve(process.cwd(), '..', '.env')
+  path.resolve(process.cwd(), '..', '.env'),
 ];
 
 const envPath = envCandidates.find((p) => fs.existsSync(p));
@@ -31,7 +31,7 @@ const Env = z.object({
   GITHUB_TOKEN: z.string().optional(),
   GITHUB_OWNER: z.string().default('Sianlk'),
   GITHUB_REPO: z.string().default('GeniAi_App_Install'),
-  OPENAI_API_KEY: z.string().optional()
+  OPENAI_API_KEY: z.string().optional(),
 });
 
 export const env = Env.parse(process.env);

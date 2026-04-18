@@ -7,12 +7,14 @@ import { env } from '../config.js';
 const octokit = env.GITHUB_TOKEN ? new Octokit({ auth: env.GITHUB_TOKEN }) : null;
 
 async function openDraftPR(suggestionId: string) {
-  const suggestion = await prisma.workforceSuggestion.findUniqueOrThrow({ where: { id: suggestionId } });
+  const suggestion = await prisma.workforceSuggestion.findUniqueOrThrow({
+    where: { id: suggestionId },
+  });
 
   if (!octokit) {
     await prisma.workforceSuggestion.update({
       where: { id: suggestion.id },
-      data: { status: 'MANUAL_REVIEW_REQUIRED' }
+      data: { status: 'MANUAL_REVIEW_REQUIRED' },
     });
     return;
   }
@@ -25,12 +27,12 @@ async function openDraftPR(suggestionId: string) {
     repo: env.GITHUB_REPO,
     title,
     body,
-    labels: ['ai-workforce', 'needs-review']
+    labels: ['ai-workforce', 'needs-review'],
   });
 
   await prisma.workforceSuggestion.update({
     where: { id: suggestion.id },
-    data: { status: 'ISSUE_OPENED' }
+    data: { status: 'ISSUE_OPENED' },
   });
 }
 
@@ -41,7 +43,7 @@ new Worker(
       await openDraftPR(job.data.suggestionId as string);
     }
   },
-  { connection: redis }
+  { connection: redis },
 );
 
 console.log('workforce worker online');

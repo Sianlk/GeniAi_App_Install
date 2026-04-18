@@ -5,12 +5,12 @@ import { FastifyInstance } from 'fastify';
 
 export async function registerSecurity(app: FastifyInstance) {
   await app.register(helmet, {
-    contentSecurityPolicy: false
+    contentSecurityPolicy: false,
   });
 
   await app.register(cors, {
     origin: [/localhost/, /hosturserver\.com$/, /sianlk\.app$/],
-    credentials: true
+    credentials: true,
   });
 
   await app.register(rateLimit, {
@@ -20,7 +20,7 @@ export async function registerSecurity(app: FastifyInstance) {
     addHeaders: {
       'x-ratelimit-limit': true,
       'x-ratelimit-remaining': true,
-      'x-ratelimit-reset': true
-    }
+      'x-ratelimit-reset': true,
+    },
   });
 }

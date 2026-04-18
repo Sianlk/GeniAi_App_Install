@@ -51,17 +51,17 @@ const EXPERIMENTS: Experiment[] = [
 
 // Feature flags
 export const FEATURE_FLAGS = {
-  aiVoiceEnabled:     { enabled: true,  rollout: 1.0 },
-  aiVisionEnabled:    { enabled: true,  rollout: 1.0 },
-  quantumFeatures:    { enabled: false, rollout: 1.0 },
-  betaAgents:         { enabled: true,  rollout: 0.2 },
-  darkModeDefault:    { enabled: false, rollout: 0.0 },
-  offlineMode:        { enabled: true,  rollout: 0.5 },
-  pushNotifications:  { enabled: true,  rollout: 1.0 },
-  biometricAuth:      { enabled: true,  rollout: 1.0 },
-  socialLogin:        { enabled: true,  rollout: 1.0 },
-  referralProgram:    { enabled: true,  rollout: 1.0 },
-  subscriptionUpsell: { enabled: true,  rollout: 0.8 },
+  aiVoiceEnabled: { enabled: true, rollout: 1.0 },
+  aiVisionEnabled: { enabled: true, rollout: 1.0 },
+  quantumFeatures: { enabled: false, rollout: 1.0 },
+  betaAgents: { enabled: true, rollout: 0.2 },
+  darkModeDefault: { enabled: false, rollout: 0.0 },
+  offlineMode: { enabled: true, rollout: 0.5 },
+  pushNotifications: { enabled: true, rollout: 1.0 },
+  biometricAuth: { enabled: true, rollout: 1.0 },
+  socialLogin: { enabled: true, rollout: 1.0 },
+  referralProgram: { enabled: true, rollout: 1.0 },
+  subscriptionUpsell: { enabled: true, rollout: 0.8 },
 } as const;
 
 class ExperimentEngine {
@@ -71,7 +71,7 @@ class ExperimentEngine {
     const cached = this.assignments.get(`${experimentId}_${userId}`);
     if (cached) return cached.variant;
 
-    const experiment = EXPERIMENTS.find(e => e.id === experimentId);
+    const experiment = EXPERIMENTS.find((e) => e.id === experimentId);
     if (!experiment || !experiment.enabled) return 'control';
 
     // Deterministic hash-based assignment

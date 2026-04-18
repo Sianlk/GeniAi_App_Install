@@ -11,8 +11,8 @@ await prisma.user.upsert({
     email: env.SUPER_ADMIN_EMAIL,
     passwordHash,
     role: 'SUPER_ADMIN',
-    appMembership: ['*']
-  }
+    appMembership: ['*'],
+  },
 });
 
 console.log(`super admin ensured: ${env.SUPER_ADMIN_EMAIL}`);

@@ -1,5 +1,4 @@
-import { setupTelemetry } from './telemetry.js';
-setupTelemetry(); // must be first — instruments http, fastify, redis, pg
+import { setupTelemetry } from './telemetry.js'; // must be first — instruments http, fastify, redis, pg
 
 import Fastify from 'fastify';
 import jwt from '@fastify/jwt';
@@ -14,6 +13,7 @@ import { runSupervisorCycle } from './modules/ai-workforce/supervisor.js';
 import { adminDashboardRoute } from './modules/admin/ui/admin-dashboard.js';
 import { metricsRoutes } from './modules/metrics/routes.js';
 import { syncRoutes } from './modules/apps/sync-routes.js';
+setupTelemetry();
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -27,7 +27,7 @@ await registerSecurity(app);
 await app.register(websocket);
 
 await app.register(jwt, {
-  secret: env.JWT_ACCESS_SECRET
+  secret: env.JWT_ACCESS_SECRET,
 });
 
 app.decorate('authenticate', async (request: any, reply: any) => {
@@ -44,7 +44,10 @@ app.addHook('onSend', async (_request, reply, payload) => {
 });
 
 app.get('/health', async () => ({ ok: true, service: 'unified-backend' }));
-app.get('/api/meta/brand', async () => ({ logoUrl: env.LOGO_URL, superAdmin: env.SUPER_ADMIN_EMAIL }));
+app.get('/api/meta/brand', async () => ({
+  logoUrl: env.LOGO_URL,
+  superAdmin: env.SUPER_ADMIN_EMAIL,
+}));
 
 app.get('/ws/trading', { websocket: true }, async (connection, req) => {
   try {
@@ -70,7 +73,7 @@ app.get('/ws/trading', { websocket: true }, async (connection, req) => {
     const payload = {
       symbol: 'BTC-USD',
       confidence: Number((0.7 + Math.random() * 0.29).toFixed(3)),
-      action: ['BUY', 'SELL', 'HOLD'][Math.floor(Math.random() * 3)]
+      action: ['BUY', 'SELL', 'HOLD'][Math.floor(Math.random() * 3)],
     };
     connection.socket.send(JSON.stringify(payload));
   }, 1200);

@@ -1,6 +1,14 @@
 // Button Component — GeniAI
 import React from 'react';
-import { TouchableOpacity, Text, ActivityIndicator, StyleSheet, ViewStyle, TextStyle, View } from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  ActivityIndicator,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+  View,
+} from 'react-native';
 import Colors from '../../theme/colors';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'ai';
@@ -20,49 +28,70 @@ interface ButtonProps {
 }
 
 export const Button: React.FC<ButtonProps> = ({
-  label, onPress, variant='primary', size='md',
-  loading=false, disabled=false, fullWidth=false, leftIcon, style, labelStyle
+  label,
+  onPress,
+  variant = 'primary',
+  size = 'md',
+  loading = false,
+  disabled = false,
+  fullWidth = false,
+  leftIcon,
+  style,
+  labelStyle,
 }) => {
   const isDisabled = disabled || loading;
   return (
     <TouchableOpacity
-      onPress={onPress} disabled={isDisabled} activeOpacity={0.8}
-      style={[styles.base, styles['sz_'+size], styles['v_'+variant], fullWidth && styles.fw, isDisabled && styles.dis, style]}
-      accessibilityRole="button" accessibilityLabel={label}
+      onPress={onPress}
+      disabled={isDisabled}
+      activeOpacity={0.8}
+      style={[
+        styles.base,
+        styles['sz_' + size],
+        styles['v_' + variant],
+        fullWidth && styles.fw,
+        isDisabled && styles.dis,
+        style,
+      ]}
+      accessibilityRole="button"
+      accessibilityLabel={label}
     >
-      {loading
-        ? <ActivityIndicator color="#fff" size="small" />
-        : <View style={styles.row}>
-            {leftIcon && <View style={styles.il}>{leftIcon}</View>}
-            <Text style={[styles.lbl, styles['lv_'+variant], styles['ls_'+size], labelStyle]}>{label}</Text>
-          </View>
-      }
+      {loading ? (
+        <ActivityIndicator color="#fff" size="small" />
+      ) : (
+        <View style={styles.row}>
+          {leftIcon && <View style={styles.il}>{leftIcon}</View>}
+          <Text style={[styles.lbl, styles['lv_' + variant], styles['ls_' + size], labelStyle]}>
+            {label}
+          </Text>
+        </View>
+      )}
     </TouchableOpacity>
   );
 };
 
 const s = StyleSheet.create({
   base: { borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  row:  { flexDirection: 'row', alignItems: 'center' },
-  il:   { marginRight: 8 },
-  fw:   { width: '100%' },
-  dis:  { opacity: 0.5 },
+  row: { flexDirection: 'row', alignItems: 'center' },
+  il: { marginRight: 8 },
+  fw: { width: '100%' },
+  dis: { opacity: 0.5 },
   sz_sm: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8 },
   sz_md: { paddingHorizontal: 20, paddingVertical: 14 },
   sz_lg: { paddingHorizontal: 28, paddingVertical: 18, borderRadius: 16 },
-  v_primary:   { backgroundColor: '#8B5CF6' },
+  v_primary: { backgroundColor: '#8B5CF6' },
   v_secondary: { backgroundColor: '#A78BFA33' },
-  v_outline:   { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: '#8B5CF6' },
-  v_ghost:     { backgroundColor: 'transparent' },
-  v_danger:    { backgroundColor: '#EF4444' },
-  v_ai:        { backgroundColor: '#7C3AED', borderWidth: 1, borderColor: '#A78BFA' },
-  lbl:    { fontSize: 14, fontWeight: '600' },
-  lv_primary:   { color: '#FFFFFF' },
+  v_outline: { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: '#8B5CF6' },
+  v_ghost: { backgroundColor: 'transparent' },
+  v_danger: { backgroundColor: '#EF4444' },
+  v_ai: { backgroundColor: '#7C3AED', borderWidth: 1, borderColor: '#A78BFA' },
+  lbl: { fontSize: 14, fontWeight: '600' },
+  lv_primary: { color: '#FFFFFF' },
   lv_secondary: { color: '#7C3AED' },
-  lv_outline:   { color: '#8B5CF6' },
-  lv_ghost:     { color: '#8B5CF6' },
-  lv_danger:    { color: '#FFFFFF' },
-  lv_ai:        { color: '#FFFFFF' },
+  lv_outline: { color: '#8B5CF6' },
+  lv_ghost: { color: '#8B5CF6' },
+  lv_danger: { color: '#FFFFFF' },
+  lv_ai: { color: '#FFFFFF' },
   ls_sm: { fontSize: 13 },
   ls_md: { fontSize: 15 },
   ls_lg: { fontSize: 17 },

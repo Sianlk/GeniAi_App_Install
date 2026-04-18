@@ -5,19 +5,21 @@ import { prisma } from '../../db.js';
 const SyncPush = z.object({
   appSlug: z.string().min(2),
   deviceId: z.string().min(3),
-  events: z.array(
-    z.object({
-      eventType: z.string().min(2),
-      payload: z.unknown(),
-      clientTs: z.string().datetime(),
-      conflictKey: z.string().optional()
-    })
-  ).min(1)
+  events: z
+    .array(
+      z.object({
+        eventType: z.string().min(2),
+        payload: z.unknown(),
+        clientTs: z.string().datetime(),
+        conflictKey: z.string().optional(),
+      }),
+    )
+    .min(1),
 });
 
 const SyncPull = z.object({
   appSlug: z.string().min(2),
-  afterTs: z.string().datetime().optional()
+  afterTs: z.string().datetime().optional(),
 });
 
 export async function syncRoutes(app: FastifyInstance) {
@@ -34,9 +36,9 @@ export async function syncRoutes(app: FastifyInstance) {
               userId: user.userId,
               appSlug: input.appSlug,
               conflictKey: evt.conflictKey,
-              resolved: true
+              resolved: true,
             },
-            orderBy: { serverTs: 'desc' }
+            orderBy: { serverTs: 'desc' },
           });
 
           resolved = !existing || new Date(evt.clientTs) >= existing.serverTs;
@@ -51,10 +53,10 @@ export async function syncRoutes(app: FastifyInstance) {
             payload: evt.payload as object,
             clientTs: new Date(evt.clientTs),
             conflictKey: evt.conflictKey,
-            resolved
-          }
+            resolved,
+          },
         });
-      })
+      }),
     );
 
     return { accepted: writes.length };
@@ -70,15 +72,15 @@ export async function syncRoutes(app: FastifyInstance) {
         userId: user.userId,
         appSlug: input.appSlug,
         serverTs: { gt: after },
-        resolved: true
+        resolved: true,
       },
       orderBy: { serverTs: 'asc' },
-      take: 1000
+      take: 1000,
     });
 
     return {
       events: rows,
-      nextCursor: rows.length ? rows[rows.length - 1].serverTs.toISOString() : after.toISOString()
+      nextCursor: rows.length ? rows[rows.length - 1].serverTs.toISOString() : after.toISOString(),
     };
   });
 }

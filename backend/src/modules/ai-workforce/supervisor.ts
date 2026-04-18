@@ -6,7 +6,7 @@ const SuggestionSchema = z.object({
   appSlug: z.string(),
   title: z.string(),
   rationale: z.string(),
-  recommendedDiff: z.string()
+  recommendedDiff: z.string(),
 });
 
 type Suggestion = z.infer<typeof SuggestionSchema>;
@@ -14,7 +14,7 @@ type Suggestion = z.infer<typeof SuggestionSchema>;
 export async function runSupervisorCycle() {
   const [metrics, feedback] = await Promise.all([
     prisma.appMetric.findMany({ orderBy: { createdAt: 'desc' }, take: 50 }),
-    prisma.userFeedback.findMany({ orderBy: { createdAt: 'desc' }, take: 50 })
+    prisma.userFeedback.findMany({ orderBy: { createdAt: 'desc' }, take: 50 }),
   ]);
 
   const llm = new ChatOpenAI({ model: 'gpt-4o-mini', temperature: 0.1 });
@@ -30,7 +30,7 @@ export async function runSupervisorCycle() {
       appSlug: 'autonomous-trading-coach',
       title: 'Fallback improvement: tighten model drift alerts',
       rationale: 'LLM output parse failed; queued deterministic hardening step.',
-      recommendedDiff: 'Add stricter p95 alerting and stale model lockout in inference route.'
+      recommendedDiff: 'Add stricter p95 alerting and stale model lockout in inference route.',
     };
   }
 
@@ -40,8 +40,8 @@ export async function runSupervisorCycle() {
       title: parsed.title,
       rationale: parsed.rationale,
       recommendedDiff: parsed.recommendedDiff,
-      status: 'PENDING_REVIEW'
-    }
+      status: 'PENDING_REVIEW',
+    },
   });
 
   return saved;

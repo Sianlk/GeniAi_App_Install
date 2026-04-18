@@ -36,7 +36,9 @@ export default function HomeScreen() {
     } catch (e) {
       setResp('AI unavailable. Check connection.');
       Analytics.error('AI_FAIL', String(e), 'Home');
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -60,9 +62,18 @@ export default function HomeScreen() {
           style={styles.aiInput}
           placeholder="Ask GeniAI AI anything..."
           placeholderTextColor={Colors.gray400}
-          value={prompt} onChangeText={setPrompt} multiline
+          value={prompt}
+          onChangeText={setPrompt}
+          multiline
         />
-        <Button label={loading ? 'Thinking...' : 'Ask AI'} onPress={askAI} variant="ai" size="sm" loading={loading} disabled={!prompt.trim()} />
+        <Button
+          label={loading ? 'Thinking...' : 'Ask AI'}
+          onPress={askAI}
+          variant="ai"
+          size="sm"
+          loading={loading}
+          disabled={!prompt.trim()}
+        />
         {resp ? (
           <View style={styles.aiResp}>
             <Text style={styles.aiRespLabel}>AI Response</Text>
@@ -74,11 +85,18 @@ export default function HomeScreen() {
       <Text style={styles.sectionTitle}>Quick Actions</Text>
       <View style={styles.grid}>
         {ACTIONS.map((item) => (
-          <TouchableOpacity key={item.id} style={styles.gridItem} onPress={()=>Analytics.featureUsed(item.title)} activeOpacity={0.7}>
+          <TouchableOpacity
+            key={item.id}
+            style={styles.gridItem}
+            onPress={() => Analytics.featureUsed(item.title)}
+            activeOpacity={0.7}
+          >
             <View style={styles.gridIcon}>
               <Ionicons name="sparkles-outline" size={22} color={Colors.primary} />
             </View>
-            <Text style={styles.gridLabel} numberOfLines={2}>{item.title}</Text>
+            <Text style={styles.gridLabel} numberOfLines={2}>
+              {item.title}
+            </Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -87,22 +105,48 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex:1, backgroundColor: Colors.background },
-  content:   { padding:20, paddingBottom:40 },
-  header:    { flexDirection:'row', justifyContent:'space-between', alignItems:'flex-start', marginBottom:24 },
-  greeting:  { ...Typography.h2, color: Colors.textPrimary },
-  tagline:   { ...Typography.bodySm, color: Colors.textSecondary, marginTop:2 },
-  notifBtn:  { padding:8, borderRadius:12, backgroundColor: Colors.gray100 },
-  aiCard:    { marginBottom:28, padding:16 },
-  aiBadge:   { flexDirection:'row', alignItems:'center', marginBottom:12 },
-  aiBadgeText: { ...Typography.label, color: Colors.primary, marginLeft:6 },
-  aiInput:   { ...Typography.bodyMd, color: Colors.textPrimary, minHeight:60, marginBottom:12, textAlignVertical:'top' },
-  aiResp:    { marginTop:16, padding:12, backgroundColor: Colors.gray50, borderRadius:10 },
-  aiRespLabel: { ...Typography.label, color: Colors.textSecondary, marginBottom:6 },
-  aiRespText:  { ...Typography.bodyMd, color: Colors.textPrimary },
-  sectionTitle: { ...Typography.h4, color: Colors.textPrimary, marginBottom:16 },
-  grid:      { flexDirection:'row', flexWrap:'wrap', gap:12 },
-  gridItem:  { width:'30%', alignItems:'center', backgroundColor: Colors.surface, borderRadius:14, padding:14, elevation:1 },
-  gridIcon:  { width:44, height:44, borderRadius:12, alignItems:'center', justifyContent:'center', marginBottom:8, backgroundColor: Colors.aiBackground },
-  gridLabel: { ...Typography.caption, color: Colors.textPrimary, textAlign:'center' },
+  container: { flex: 1, backgroundColor: Colors.background },
+  content: { padding: 20, paddingBottom: 40 },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 24,
+  },
+  greeting: { ...Typography.h2, color: Colors.textPrimary },
+  tagline: { ...Typography.bodySm, color: Colors.textSecondary, marginTop: 2 },
+  notifBtn: { padding: 8, borderRadius: 12, backgroundColor: Colors.gray100 },
+  aiCard: { marginBottom: 28, padding: 16 },
+  aiBadge: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+  aiBadgeText: { ...Typography.label, color: Colors.primary, marginLeft: 6 },
+  aiInput: {
+    ...Typography.bodyMd,
+    color: Colors.textPrimary,
+    minHeight: 60,
+    marginBottom: 12,
+    textAlignVertical: 'top',
+  },
+  aiResp: { marginTop: 16, padding: 12, backgroundColor: Colors.gray50, borderRadius: 10 },
+  aiRespLabel: { ...Typography.label, color: Colors.textSecondary, marginBottom: 6 },
+  aiRespText: { ...Typography.bodyMd, color: Colors.textPrimary },
+  sectionTitle: { ...Typography.h4, color: Colors.textPrimary, marginBottom: 16 },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+  gridItem: {
+    width: '30%',
+    alignItems: 'center',
+    backgroundColor: Colors.surface,
+    borderRadius: 14,
+    padding: 14,
+    elevation: 1,
+  },
+  gridIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+    backgroundColor: Colors.aiBackground,
+  },
+  gridLabel: { ...Typography.caption, color: Colors.textPrimary, textAlign: 'center' },
 });

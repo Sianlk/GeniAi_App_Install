@@ -8,13 +8,13 @@ const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 
 const BuyInput = z.object({
   credits: z.number().int().min(100),
-  accountId: z.string().optional()
+  accountId: z.string().optional(),
 });
 
 const SpendInput = z.object({
   amountPence: z.number().int().positive(),
   reason: z.string().min(2),
-  appSlug: z.string().min(2)
+  appSlug: z.string().min(2),
 });
 
 export async function creditRoutes(app: FastifyInstance) {
@@ -23,7 +23,7 @@ export async function creditRoutes(app: FastifyInstance) {
     const row = await prisma.user.findUniqueOrThrow({ where: { id: user.userId } });
     return {
       creditsPence: row.creditsPence.toString(),
-      currency: 'GBP'
+      currency: 'GBP',
     };
   });
 
@@ -42,19 +42,19 @@ export async function creditRoutes(app: FastifyInstance) {
           price_data: {
             currency: 'gbp',
             product_data: { name: `Platform Credits (${input.credits})` },
-            unit_amount: amountPence
-          }
-        }
+            unit_amount: amountPence,
+          },
+        },
       ],
       payment_intent_data: {
         transfer_data: input.accountId ? { destination: input.accountId } : undefined,
         metadata: {
           userId: user.userId,
-          creditsPence: String(amountPence)
-        }
+          creditsPence: String(amountPence),
+        },
       },
       success_url: 'https://hosturserver.com/success',
-      cancel_url: 'https://hosturserver.com/cancel'
+      cancel_url: 'https://hosturserver.com/cancel',
     });
 
     return { checkoutUrl: session.url };
@@ -72,7 +72,7 @@ export async function creditRoutes(app: FastifyInstance) {
 
       const updated = await tx.user.update({
         where: { id: user.userId },
-        data: { creditsPence: current.creditsPence - BigInt(input.amountPence) }
+        data: { creditsPence: current.creditsPence - BigInt(input.amountPence) },
       });
 
       await tx.creditTxn.create({
@@ -81,8 +81,8 @@ export async function creditRoutes(app: FastifyInstance) {
           type: 'SPEND',
           amountPence: BigInt(-input.amountPence),
           currency: 'GBP',
-          meta: { reason: input.reason, appSlug: input.appSlug }
-        }
+          meta: { reason: input.reason, appSlug: input.appSlug },
+        },
       });
 
       return { creditsPence: updated.creditsPence.toString(), currency: 'GBP' };

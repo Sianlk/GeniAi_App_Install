@@ -26,22 +26,22 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      user:            null,
+      user: null,
       isAuthenticated: false,
-      isLoading:       false,
-      isHydrated:      false,
-      setUser:     (user) => set({ user, isAuthenticated: user !== null }),
-      setLoading:  (v)    => set({ isLoading: v }),
-      setHydrated: (v)    => set({ isHydrated: v }),
-      logout:      ()     => set({ user: null, isAuthenticated: false }),
+      isLoading: false,
+      isHydrated: false,
+      setUser: (user) => set({ user, isAuthenticated: user !== null }),
+      setLoading: (v) => set({ isLoading: v }),
+      setHydrated: (v) => set({ isHydrated: v }),
+      logout: () => set({ user: null, isAuthenticated: false }),
     }),
     {
-      name:    'auth-storage',
+      name: 'auth-storage',
       storage: createJSONStorage(() => AsyncStorage),
       onRehydrateStorage: () => (state) => {
         state?.setHydrated(true);
         if (state) state.isAuthenticated = state.user !== null;
       },
-    }
-  )
+    },
+  ),
 );

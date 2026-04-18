@@ -44,12 +44,14 @@ export class AIWorkforceAgent {
     this.persona = persona;
   }
 
-  get status(): AgentStatus { return this._status; }
+  get status(): AgentStatus {
+    return this._status;
+  }
 
   async executeTask(task: AgentTask): Promise<AgentResult> {
     this._status = 'thinking';
     const p = PERSONAS[this.persona];
-    const systemPrompt = `You are ${p.name}.\nRole: ${p.role}\n\nRespond with JSON: {"output":"...","confidence":0.9,"reasoning":"...","actions":["..."]}`; 
+    const systemPrompt = `You are ${p.name}.\nRole: ${p.role}\n\nRespond with JSON: {"output":"...","confidence":0.9,"reasoning":"...","actions":["..."]}`;
     const userPrompt = `Task: ${task.type}\nInput: ${task.input}`;
     this._status = 'working';
     const response = await aiComplete([
@@ -57,17 +59,29 @@ export class AIWorkforceAgent {
       ...this.history,
       { role: 'user', content: userPrompt },
     ]);
-    this.history.push({ role: 'user', content: userPrompt }, { role: 'assistant', content: response.content });
+    this.history.push(
+      { role: 'user', content: userPrompt },
+      { role: 'assistant', content: response.content },
+    );
     if (this.history.length > 20) this.history = this.history.slice(-20);
     this._status = 'done';
     try {
       return { taskId: task.id, ...JSON.parse(response.content) };
     } catch {
-      return { taskId: task.id, output: response.content, confidence: 0.7, reasoning: 'Direct response', actions: ['Processed'] };
+      return {
+        taskId: task.id,
+        output: response.content,
+        confidence: 0.7,
+        reasoning: 'Direct response',
+        actions: ['Processed'],
+      };
     }
   }
 
-  reset() { this.history = []; this._status = 'idle'; }
+  reset() {
+    this.history = [];
+    this._status = 'idle';
+  }
 }
 
 export const createAgent = (p: keyof typeof PERSONAS = 'analyst') => new AIWorkforceAgent(p);

@@ -27,7 +27,10 @@ export interface AIResponse {
 export async function aiComplete(messages: AIMessage[]): Promise<AIResponse> {
   const res = await aiClient.post('/api/ai/complete', {
     messages: [
-      { role: 'system', content: `Expert AI for AI platform. Focus: multi-modal AI, GPT orchestration, autonomous agents, AI workforce.` },
+      {
+        role: 'system',
+        content: `Expert AI for AI platform. Focus: multi-modal AI, GPT orchestration, autonomous agents, AI workforce.`,
+      },
       ...messages,
     ],
     model: AI_CONFIG.models.primary,

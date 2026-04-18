@@ -57,7 +57,7 @@ export default function App() {
     const localSignal: Signal = {
       symbol,
       confidence: Number(Math.max(...vals).toFixed(3)),
-      action
+      action,
     };
 
     setSignal(localSignal);
@@ -66,12 +66,19 @@ export default function App() {
     await fetch(`${API_BASE}/api/apps/predict`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ appSlug: 'autonomous-trading-coach', features: vals, scenario: 'live_prediction' })
+      body: JSON.stringify({
+        appSlug: 'autonomous-trading-coach',
+        features: vals,
+        scenario: 'live_prediction',
+      }),
     });
   }
 
   async function saveOfflineDecision() {
-    const next = [...offlineQueue, { note: `${symbol}:${signal?.action ?? 'HOLD'}`, timestamp: Date.now() }];
+    const next = [
+      ...offlineQueue,
+      { note: `${symbol}:${signal?.action ?? 'HOLD'}`, timestamp: Date.now() },
+    ];
     setOfflineQueue(next);
     await AsyncStorage.setItem('offline-decisions', JSON.stringify(next));
     setStatus('saved_offline');
@@ -87,7 +94,9 @@ export default function App() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#0B1220' }}>
       <ScrollView contentContainerStyle={{ padding: 18, gap: 12 }}>
-        <Text style={{ color: '#F9FAFB', fontSize: 26, fontWeight: '700' }}>Autonomous Trading Coach</Text>
+        <Text style={{ color: '#F9FAFB', fontSize: 26, fontWeight: '700' }}>
+          Autonomous Trading Coach
+        </Text>
         <Text style={{ color: '#93C5FD' }}>Realtime + Offline + Predictive AI edge stack</Text>
 
         <TextInput
@@ -101,8 +110,12 @@ export default function App() {
 
         <View style={{ backgroundColor: '#111827', borderRadius: 12, padding: 12 }}>
           <Text style={{ color: '#D1D5DB' }}>Status: {status}</Text>
-          <Text style={{ color: '#D1D5DB' }}>Signal: {signal ? `${signal.action} (${signal.confidence})` : 'none'}</Text>
-          <Text style={{ color: '#D1D5DB' }}>Projected 6M rewards @5% monthly: £{rewardProjection / 100}</Text>
+          <Text style={{ color: '#D1D5DB' }}>
+            Signal: {signal ? `${signal.action} (${signal.confidence})` : 'none'}
+          </Text>
+          <Text style={{ color: '#D1D5DB' }}>
+            Projected 6M rewards @5% monthly: £{rewardProjection / 100}
+          </Text>
           <Text style={{ color: '#D1D5DB' }}>Offline decisions queued: {offlineQueue.length}</Text>
         </View>
       </ScrollView>

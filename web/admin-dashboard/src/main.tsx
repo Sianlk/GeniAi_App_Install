@@ -5,10 +5,25 @@ const SUPER_ADMIN_EMAIL = 'hosturserver@gmail.com';
 
 function App() {
   return (
-    <main style={{ fontFamily: 'Manrope, sans-serif', padding: 24, background: '#030712', color: '#f8fafc', minHeight: '100vh' }}>
+    <main
+      style={{
+        fontFamily: 'Manrope, sans-serif',
+        padding: 24,
+        background: '#030712',
+        color: '#f8fafc',
+        minHeight: '100vh',
+      }}
+    >
       <h1>Hostur Super Admin Console</h1>
       <p>Authorized super admin: {SUPER_ADMIN_EMAIL}</p>
-      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 12, marginTop: 18 }}>
+      <section
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))',
+          gap: 12,
+          marginTop: 18,
+        }}
+      >
         <article style={{ background: '#111827', borderRadius: 12, padding: 14 }}>
           <h3>Global User Control</h3>
           <p>Manage users, plans, app memberships, and role escalations.</p>
@@ -29,5 +44,5 @@ function App() {
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>
+  </React.StrictMode>,
 );

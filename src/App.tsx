@@ -1,22 +1,24 @@
 /**
  * GeniAI — Root App Component
  */
-import React, {useEffect} from 'react';
-import {StatusBar, Platform} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import AppNavigator, {linking} from './navigation/AppNavigator';
-import {useAuthStore} from './store/authStore';
-import {initDeepLinks} from './utils/deepLinks';
-import {initPushNotifications} from './utils/pushNotifications';
+import React, { useEffect } from 'react';
+import { StatusBar, Platform } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import AppNavigator, { linking } from './navigation/AppNavigator';
+import { useAuthStore } from './store/authStore';
+import { initDeepLinks } from './utils/deepLinks';
+import { initPushNotifications } from './utils/pushNotifications';
 
 const navigationRef = React.createRef<any>();
 
 export default function App() {
-  const {accessToken, bootstrapAuth} = useAuthStore();
+  const { accessToken, bootstrapAuth } = useAuthStore();
 
-  useEffect(() => { bootstrapAuth(); }, []);
+  useEffect(() => {
+    bootstrapAuth();
+  }, []);
 
   useEffect(() => {
     const cleanup = initDeepLinks(navigationRef);
@@ -33,12 +35,9 @@ export default function App() {
   }, [accessToken]);
 
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor="#8B5CF6"
-        />
+        <StatusBar barStyle="dark-content" backgroundColor="#8B5CF6" />
         <NavigationContainer ref={navigationRef} linking={linking}>
           <AppNavigator />
         </NavigationContainer>

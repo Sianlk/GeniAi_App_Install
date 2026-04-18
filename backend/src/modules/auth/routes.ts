@@ -7,7 +7,7 @@ import { env } from '../../config.js';
 
 const AuthIn = z.object({
   email: z.string().email(),
-  password: z.string().min(8)
+  password: z.string().min(8),
 });
 
 const RefreshIn = z.object({ refreshToken: z.string().min(20) });
@@ -16,16 +16,19 @@ function hashToken(token: string) {
   return createHash('sha256').update(token).digest('hex');
 }
 
-async function issueTokens(app: FastifyInstance, user: { id: string; email: string; role: string; appMembership: string[] }) {
+async function issueTokens(
+  app: FastifyInstance,
+  user: { id: string; email: string; role: string; appMembership: string[] },
+) {
   const accessToken = app.jwt.sign(
     {
       userId: user.id,
       email: user.email,
       role: user.role,
       appMembership: user.appMembership,
-      tokenVersion: Date.now()
+      tokenVersion: Date.now(),
     },
-    { expiresIn: env.JWT_ACCESS_TTL }
+    { expiresIn: env.JWT_ACCESS_TTL },
   );
 
   const refreshTokenRaw = randomBytes(48).toString('hex');
@@ -33,8 +36,8 @@ async function issueTokens(app: FastifyInstance, user: { id: string; email: stri
     data: {
       userId: user.id,
       tokenHash: hashToken(refreshTokenRaw),
-      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
-    }
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+    },
   });
 
   return { accessToken, refreshToken: refreshTokenRaw };
@@ -53,14 +56,14 @@ export async function authRoutes(app: FastifyInstance) {
         email: input.email,
         passwordHash,
         role,
-        appMembership: role === 'SUPER_ADMIN' ? ['*'] : []
-      }
+        appMembership: role === 'SUPER_ADMIN' ? ['*'] : [],
+      },
     });
 
     const tokens = await issueTokens(app, user);
     return reply.code(201).send({
       ...tokens,
-      user: { id: user.id, email: user.email, role: user.role }
+      user: { id: user.id, email: user.email, role: user.role },
     });
   });
 
@@ -79,7 +82,7 @@ export async function authRoutes(app: FastifyInstance) {
       token_type: 'bearer',
       user_id: user.id,
       email: user.email,
-      role: user.role
+      role: user.role,
     });
   });
 
@@ -87,7 +90,7 @@ export async function authRoutes(app: FastifyInstance) {
     const { refreshToken } = RefreshIn.parse(req.body);
     const refresh = await prisma.refreshToken.findUnique({
       where: { tokenHash: hashToken(refreshToken) },
-      include: { user: true }
+      include: { user: true },
     });
 
     if (!refresh || refresh.revokedAt || refresh.expiresAt < new Date()) {
@@ -96,7 +99,7 @@ export async function authRoutes(app: FastifyInstance) {
 
     await prisma.refreshToken.update({
       where: { id: refresh.id },
-      data: { revokedAt: new Date() }
+      data: { revokedAt: new Date() },
     });
 
     const tokens = await issueTokens(app, refresh.user);

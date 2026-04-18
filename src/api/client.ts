@@ -14,7 +14,7 @@ async function request<T>(path: string, opts: ApiOptions = {}): Promise<T> {
 
   if (auth) {
     const token = await AsyncStorage.getItem('access_token');
-    if (token) headers['Authorization'] = `Bearer ${token}`;
+    if (token) headers.Authorization = `Bearer ${token}`;
   }
 
   const res = await fetch(`${BASE_URL}${path}`, {
@@ -34,8 +34,12 @@ async function request<T>(path: string, opts: ApiOptions = {}): Promise<T> {
       if (rr.ok) {
         const data = await rr.json();
         await AsyncStorage.setItem('access_token', data.access_token);
-        headers['Authorization'] = `Bearer ${data.access_token}`;
-        const retry = await fetch(`${BASE_URL}${path}`, { method, headers, body: body ? JSON.stringify(body) : undefined });
+        headers.Authorization = `Bearer ${data.access_token}`;
+        const retry = await fetch(`${BASE_URL}${path}`, {
+          method,
+          headers,
+          body: body ? JSON.stringify(body) : undefined,
+        });
         if (!retry.ok) throw new Error(`${retry.status}`);
         return retry.json() as Promise<T>;
       }
@@ -51,8 +55,10 @@ async function request<T>(path: string, opts: ApiOptions = {}): Promise<T> {
 }
 
 export const api = {
-  get:    <T>(path: string, auth = true) => request<T>(path, { auth }),
-  post:   <T>(path: string, body: object, auth = true) => request<T>(path, { method: 'POST', body, auth }),
-  put:    <T>(path: string, body: object, auth = true) => request<T>(path, { method: 'PUT',  body, auth }),
+  get: <T>(path: string, auth = true) => request<T>(path, { auth }),
+  post: <T>(path: string, body: object, auth = true) =>
+    request<T>(path, { method: 'POST', body, auth }),
+  put: <T>(path: string, body: object, auth = true) =>
+    request<T>(path, { method: 'PUT', body, auth }),
   delete: <T>(path: string, auth = true) => request<T>(path, { method: 'DELETE', auth }),
 };

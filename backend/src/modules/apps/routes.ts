@@ -4,15 +4,18 @@ import { z } from 'zod';
 const PredictInput = z.object({
   appSlug: z.string().min(2),
   features: z.array(z.number()).min(4),
-  scenario: z.string().min(4)
+  scenario: z.string().min(4),
 });
 
 export async function appRoutes(app: FastifyInstance) {
   app.get('/api/apps/catalog', async () => {
     return [
-      { slug: 'autonomous-trading-coach', edge: 'TensorFlow.js + realtime alpha stream + offline strategy sync' },
+      {
+        slug: 'autonomous-trading-coach',
+        edge: 'TensorFlow.js + realtime alpha stream + offline strategy sync',
+      },
       { slug: 'gitgit-copilot', edge: 'WebSocket review swarm + predictive risk classification' },
-      { slug: 'terminalai-ops', edge: 'Offline command memory + AR command topology' }
+      { slug: 'terminalai-ops', edge: 'Offline command memory + AR command topology' },
     ];
   });
 
@@ -23,7 +26,7 @@ export async function appRoutes(app: FastifyInstance) {
     return {
       appSlug: input.appSlug,
       score,
-      recommendation: score > 1.5 ? 'high_confidence_automation' : 'human_guardrail_required'
+      recommendation: score > 1.5 ? 'high_confidence_automation' : 'human_guardrail_required',
     };
   });
 }

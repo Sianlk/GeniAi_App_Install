@@ -9,14 +9,11 @@ const WINDOW_MS = 90_000; // ±90 seconds replay protection window
 export function generateApprovalSignature(
   actorEmail: string,
   suggestionId: string,
-  secret: string
+  secret: string,
 ): { signature: string; timestamp: number } {
   const timestamp = Date.now();
   const payload = `${actorEmail}:${suggestionId}:${timestamp}`;
-  const signature = crypto
-    .createHmac('sha256', secret)
-    .update(payload)
-    .digest('hex');
+  const signature = crypto.createHmac('sha256', secret).update(payload).digest('hex');
   return { signature, timestamp };
 }
 
@@ -29,7 +26,7 @@ export function verifyApprovalSignature(
   suggestionId: string,
   timestamp: number,
   signature: string,
-  secret: string
+  secret: string,
 ): boolean {
   const now = Date.now();
   if (Math.abs(now - timestamp) > WINDOW_MS) {
@@ -37,14 +34,8 @@ export function verifyApprovalSignature(
   }
 
   const payload = `${actorEmail}:${suggestionId}:${timestamp}`;
-  const expected = crypto
-    .createHmac('sha256', secret)
-    .update(payload)
-    .digest('hex');
+  const expected = crypto.createHmac('sha256', secret).update(payload).digest('hex');
 
   // Constant-time comparison to prevent timing attacks
-  return crypto.timingSafeEqual(
-    Buffer.from(expected, 'hex'),
-    Buffer.from(signature, 'hex')
-  );
+  return crypto.timingSafeEqual(Buffer.from(expected, 'hex'), Buffer.from(signature, 'hex'));
 }

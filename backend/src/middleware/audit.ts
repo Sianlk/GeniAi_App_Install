@@ -15,7 +15,7 @@ export async function writeAuditLog(input: {
       action: input.action,
       targetType: input.targetType,
       targetId: input.targetId,
-      payload: input.payload as object | undefined
-    }
+      payload: input.payload as object | undefined,
+    },
   });
 }
