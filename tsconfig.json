@@ -11,5 +11,6 @@
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", "tests", "dist", "build", ".expo"]
 }
