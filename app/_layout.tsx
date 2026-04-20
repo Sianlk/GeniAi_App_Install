@@ -13,7 +13,9 @@ export default function RootLayout() {
   useEffect(() => {
     Splash.hideAsync();
     Analytics.screen('App Launch');
-    registerForPush().then((t) => { if (t) syncToken(t); });
+    registerForPush().then((t) => {
+      if (t) syncToken(t);
+    });
   }, []);
   return (
     <>

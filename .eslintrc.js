@@ -1,10 +1,6 @@
 module.exports = {
   root: true,
-  extends: [
-    'expo',
-    '@react-native',
-    'prettier',
-  ],
+  extends: ['expo', '@react-native-community/eslint-config', 'prettier'],
   plugins: ['prettier'],
   rules: {
     'prettier/prettier': 'error',
@@ -12,6 +8,7 @@ module.exports = {
     'no-unused-vars': 'warn',
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-useless-constructor': 'off',
     'react-native/no-inline-styles': 'warn',
     'react-hooks/exhaustive-deps': 'warn',
   },
@@ -29,5 +26,6 @@ module.exports = {
     'android/',
     'ios/',
     'coverage/',
+    'web/admin-dashboard/',
   ],
 };

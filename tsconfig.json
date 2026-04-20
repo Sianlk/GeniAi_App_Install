@@ -1,5 +1,5 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json",
+  "extends": "@react-native/typescript-config",
   "compilerOptions": {
     "strict": true,
     "noImplicitAny": true,
@@ -8,12 +8,9 @@
     "noUnusedParameters": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ]
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", "tests", "dist", "build", ".expo"]
 }

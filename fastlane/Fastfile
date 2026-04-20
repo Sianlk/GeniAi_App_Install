@@ -1,81 +1,20 @@
-# Fastfile for GeniAI
 default_platform(:ios)
 
-before_all do
-  ensure_env_vars(
-    env_vars: ["EXPO_TOKEN"]
-  )
-end
-
-# gym is the Fastlane action for building iOS apps (alias for build_ios_app)
 platform :ios do
-  desc "Build and upload to TestFlight"
-  lane :beta do
-    setup_ci if ENV["CI"]
-    build_app_with_eas(
-      platform: "ios",
-      profile: "preview"
-    )
-    upload_to_testflight(
-      api_key_path: "fastlane/app_store_connect_api_key.json",
-      skip_waiting_for_build_processing: true
-    )
-    slack(
-      message: "✅ GeniAI iOS beta build uploaded to TestFlight!",
-      success: true
-    ) if ENV["SLACK_URL"]
-  end
-
-  desc "Release to App Store"
+  desc "Build and submit iOS app"
   lane :release do
-    gym(export_method: 'app-store') # build IPA
-    setup_ci if ENV["CI"]
-    build_app_with_eas(
-      platform: "ios",
-      profile: "production"
+    build_app(
+      workspace: "mobile/apps/autonomous-trading-coach/ios/AutonomousTradingCoach.xcworkspace",
+      scheme: "AutonomousTradingCoach"
     )
-    upload_to_app_store(
-      api_key_path: "fastlane/app_store_connect_api_key.json",
-      skip_screenshots: false,
-      screenshots_path: "fastlane/screenshots/ios",
-      metadata_path: "fastlane/metadata/ios",
-      submit_for_review: true,
-      automatic_release: false,
-      force: true
-    )
+    upload_to_app_store(skip_metadata: true, skip_screenshots: true)
   end
 end
 
 platform :android do
-  desc "Build and upload to Google Play Internal Testing"
-  lane :beta do
-    setup_ci if ENV["CI"]
-    build_app_with_eas(
-      platform: "android",
-      profile: "preview"
-    )
-    upload_to_play_store(
-      track: "internal",
-      aab: lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH]
-    )
-  end
-
-  desc "Release to Google Play Production"
+  desc "Build and submit Android app"
   lane :release do
-    gym(export_method: 'app-store') # build IPA
-    setup_ci if ENV["CI"]
-    build_app_with_eas(
-      platform: "android",
-      profile: "production"
-    )
-    upload_to_play_store(
-      track: "production",
-      metadata_path: "fastlane/metadata/android"
-    )
+    gradle(task: "bundle", project_dir: "mobile/apps/autonomous-trading-coach/android")
+    upload_to_play_store(track: "production", release_status: "draft")
   end
-end
-
-# Helper: build with EAS CLI
-def build_app_with_eas(platform:, profile:)
-  sh("npx eas-cli build --platform #{platform} --profile #{profile} --non-interactive --no-wait")
 end

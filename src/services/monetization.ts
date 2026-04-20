@@ -27,11 +27,7 @@ export const PLANS: Record<Plan, PlanConfig> = {
     price_annual: 0,
     sku_monthly: '',
     sku_annual: '',
-    features: [
-      '10 AI requests/day',
-      'Basic AI platform features',
-      'Community support',
-    ],
+    features: ['10 AI requests/day', 'Basic AI platform features', 'Community support'],
     ai_requests_per_day: 10,
     agents_enabled: false,
     priority_support: false,
@@ -103,8 +99,12 @@ class MonetizationEngine {
   private requestsToday = 0;
   private lastResetDate = new Date().toDateString();
 
-  getCurrentPlan(): Plan { return this.currentPlan; }
-  getPlanConfig(): PlanConfig { return PLANS[this.currentPlan]; }
+  getCurrentPlan(): Plan {
+    return this.currentPlan;
+  }
+  getPlanConfig(): PlanConfig {
+    return PLANS[this.currentPlan];
+  }
 
   canMakeAIRequest(): boolean {
     this.resetIfNewDay();
@@ -136,7 +136,7 @@ class MonetizationEngine {
             // TODO: Navigate to PaywallScreen
           },
         },
-      ]
+      ],
     );
   }
 

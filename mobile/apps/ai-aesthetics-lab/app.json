@@ -1,0 +1,35 @@
+{
+    "expo":  {
+                 "name":  "ai-aesthetics-lab",
+                 "slug":  "ai-aesthetics-lab",
+                 "scheme":  "autonomous-trading-coach",
+                 "version":  "1.0.0",
+                 "orientation":  "portrait",
+                 "icon":  "./assets/icon.png",
+                 "userInterfaceStyle":  "automatic",
+                 "splash":  {
+                                "image":  "./assets/splash.png",
+                                "resizeMode":  "contain",
+                                "backgroundColor":  "#0D1117"
+                            },
+                 "assetBundlePatterns":  [
+                                             "**/*"
+                                         ],
+                 "ios":  {
+                             "supportsTablet":  true,
+                             "bundleIdentifier":  "com.hostur.autonomoustradingcoach"
+                         },
+                 "android":  {
+                                 "package":  "com.hostur.autonomoustradingcoach",
+                                 "versionCode":  1
+                             },
+                 "web":  {
+                             "bundler":  "metro",
+                             "output":  "single"
+                         },
+                 "extra":  {
+                               "apiBaseUrl":  "https://api.hosturserver.com",
+                               "appId":  "ai-aesthetics-lab"
+                           }
+             }
+}

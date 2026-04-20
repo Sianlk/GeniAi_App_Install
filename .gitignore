@@ -1,63 +1,12 @@
-# Virtual environments
-.venv/
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject/
-
-# mkdocs documentation
-/site/
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# pytype static type analyzer
-.pytype/
-
-# Cython debug symbols
-cython_debug/
-
-# Ruff linter cache
-.ruff_cache/
-
-# PyPI config
-.pypirc
-
-# PyCharm & JetBrains
-.idea/
-
-# GenesisOS directories
-vault/
-backup/
-*.zip
+node_modules/
+.env
+.env.*
+.secrets.local.env
+dist/
+coverage/
 *.log
-__pycache__/
-# File: validate_code.py
-import ast
-
-def validate_python(code):
-    try:
-            ast.parse(code)
-                    return True
-                        except SyntaxError:
-                                return False
-   graph TD
-       A[AI Code Generation] --> B[GitHub Commit]
-           B --> C[Automated Testing]
-               C --> D{Passed?}
-                   D -->|Yes| E[Production Deployment]
-                       D -->|No| F[Slack Alert]
-                                                    
+mobile/apps/*/.expo/
+mobile/apps/*/node_modules/
+backend/node_modules/
+backend/prisma/migrations/
+.DS_Store

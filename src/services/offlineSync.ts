@@ -43,9 +43,15 @@ class OfflineSyncEngine {
   }
 
   async enqueue(endpoint: string, method: string, body?: unknown): Promise<string> {
-    const id = `${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+    const id = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
     const action: QueuedAction = {
-      id, endpoint, method, body, timestamp: Date.now(), retries: 0, maxRetries: 3,
+      id,
+      endpoint,
+      method,
+      body,
+      timestamp: Date.now(),
+      retries: 0,
+      maxRetries: 3,
     };
 
     if (this.queue.length >= MAX_QUEUE_SIZE) {
@@ -96,7 +102,9 @@ class OfflineSyncEngine {
     } catch {}
   }
 
-  get pendingCount(): number { return this.queue.length; }
+  get pendingCount(): number {
+    return this.queue.length;
+  }
 
   destroy(): void {
     this.unsubscribe?.();

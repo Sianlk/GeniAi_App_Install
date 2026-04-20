@@ -13,7 +13,14 @@ export default function AppNavigator() {
 
   if (!isHydrated) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#8B5CF6' }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#8B5CF6',
+        }}
+      >
         <ActivityIndicator size="large" color="#fff" />
       </View>
     );

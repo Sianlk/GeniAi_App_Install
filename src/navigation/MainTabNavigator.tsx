@@ -1,8 +1,8 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text } from 'react-native';
-import HomeScreen     from '../screens/HomeScreen';
-import ProfileScreen  from '../screens/ProfileScreen';
+import HomeScreen from '../screens/HomeScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
 const Tab = createBottomTabNavigator();
@@ -18,15 +18,24 @@ export default function MainTabNavigator() {
         headerShown: false,
         tabBarActiveTintColor: '#8B5CF6',
         tabBarInactiveTintColor: '#9CA3AF',
-        tabBarStyle: {{ backgroundColor: '#fff', borderTopColor: '#E5E7EB', paddingBottom: 4 }},
+        tabBarStyle: { backgroundColor: '#fff', borderTopColor: '#E5E7EB', paddingBottom: 4 },
       }}
     >
-      <Tab.Screen name="Home"     component={HomeScreen}
-        options={{ tabBarIcon: ({focused}) => <TabIcon emoji="🏠" focused={focused} /> }} />
-      <Tab.Screen name="Profile"  component={ProfileScreen}
-        options={{ tabBarIcon: ({focused}) => <TabIcon emoji="👤" focused={focused} /> }} />
-      <Tab.Screen name="Settings" component={SettingsScreen}
-        options={{ tabBarIcon: ({focused}) => <TabIcon emoji="⚙️" focused={focused} /> }} />
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="🏠" focused={focused} /> }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="👤" focused={focused} /> }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="⚙️" focused={focused} /> }}
+      />
     </Tab.Navigator>
   );
 }
